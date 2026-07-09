@@ -5,233 +5,247 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const CoreScene = dynamic(() => import("@/components/core-scene"), {
+const EditorialObject = dynamic(() => import("@/components/core-scene"), {
   ssr: false,
-  loading: () => <div className="scene-fallback" />,
 });
 
 const projects = [
   {
-    index: "01",
+    no: "01",
     year: "2024",
-    title: "Digital Commerce",
-    type: "Full-stack experience",
-    copy: "A fast, conversion-led storefront shaped around product discovery, clean systems, and frictionless interaction.",
-    color: "#ff9a3c",
+    name: "Digital Commerce",
+    discipline: "Design / Development",
+    description: "A conversion-led commerce experience built around discovery, speed, and a frictionless path to purchase.",
+    tone: "coral",
   },
   {
-    index: "02",
+    no: "02",
     year: "2023",
-    title: "Operations Engine",
-    type: "Platform architecture",
-    copy: "A complex management workflow distilled into a focused interface that turns noisy data into clear decisions.",
-    color: "#9fffd8",
+    name: "Operations Engine",
+    discipline: "Product / Full Stack",
+    description: "Complex business operations shaped into a direct, visual system for faster everyday decisions.",
+    tone: "ink",
   },
   {
-    index: "03",
+    no: "03",
     year: "2022",
-    title: "Interactive Worlds",
-    type: "Creative development",
-    copy: "Experimental web work where motion, code, and visual storytelling meet to make the browser feel physical.",
-    color: "#b3b8ff",
+    name: "Interactive Worlds",
+    discipline: "Creative Development",
+    description: "Experiments where interface, motion, and code work together to make the browser feel physical.",
+    tone: "acid",
   },
 ];
 
-function Arrow({ diagonal = false }: { diagonal?: boolean }) {
-  return <span aria-hidden="true">{diagonal ? "↗" : "↓"}</span>;
+function NorthEast() {
+  return <span aria-hidden="true">↗</span>;
 }
 
 export default function Home() {
-  const root = useRef<HTMLDivElement>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [time, setTime] = useState("");
+  const scope = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    const loaderTimer = window.setTimeout(() => setLoaded(true), 1200);
-    const updateTime = () =>
-      setTime(
-        new Intl.DateTimeFormat("en", {
-          timeZone: "Asia/Karachi",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        }).format(new Date()),
-      );
-    updateTime();
-    const clock = window.setInterval(updateTime, 30_000);
+    const timer = window.setTimeout(() => setReady(true), 850);
 
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
+    const context = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>("[data-rise]").forEach((item) => {
         gsap.fromTo(
-          element,
-          { y: 80, opacity: 0 },
+          item,
+          { yPercent: 105 },
           {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
+            yPercent: 0,
+            duration: 1.15,
             ease: "power4.out",
-            scrollTrigger: { trigger: element, start: "top 88%" },
+            scrollTrigger: { trigger: item, start: "top 92%" },
           },
         );
       });
 
-      gsap.utils.toArray<HTMLElement>(".project-row").forEach((row) => {
+      gsap.utils.toArray<HTMLElement>("[data-fade]").forEach((item) => {
         gsap.fromTo(
-          row,
-          { clipPath: "inset(0 100% 0 0)" },
+          item,
+          { opacity: 0, y: 30 },
           {
-            clipPath: "inset(0 0% 0 0)",
-            duration: 1.4,
-            ease: "power3.inOut",
-            scrollTrigger: { trigger: row, start: "top 90%" },
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: { trigger: item, start: "top 90%" },
           },
         );
       });
-    }, root);
+
+      gsap.to(".hero-object", {
+        yPercent: 28,
+        rotate: 6,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".editorial-hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    }, scope);
 
     return () => {
-      window.clearTimeout(loaderTimer);
-      window.clearInterval(clock);
-      ctx.revert();
+      window.clearTimeout(timer);
+      context.revert();
     };
   }, []);
 
   return (
-    <div ref={root} className="site-shell">
-      <div className={`loader ${loaded ? "loader--done" : ""}`} aria-hidden="true">
-        <div className="loader__mark">U/Z</div>
-        <div className="loader__line"><span /></div>
-        <p>Establishing signal</p>
+    <div ref={scope} className="folio">
+      <div className={`intro ${ready ? "intro--out" : ""}`} aria-hidden="true">
+        <div className="intro__counter">©26</div>
+        <div className="intro__bar"><i /></div>
+        <span>Loading index</span>
       </div>
 
-      <div className="grain" aria-hidden="true" />
-      <div className="canvas-wrap" aria-hidden="true">
-        <CoreScene />
-      </div>
-
-      <header className="site-nav">
-        <a className="monogram" href="#top" aria-label="Back to top">U/Z</a>
-        <nav aria-label="Primary navigation">
-          <a href="#work">Work</a>
-          <a href="#about">About</a>
+      <header className="topbar">
+        <a href="#top" className="wordmark">UZAIR<span>®</span></a>
+        <nav>
+          <a href="#profile">Profile</a>
+          <a href="#work">Index</a>
           <a href="#contact">Contact</a>
         </nav>
-        <div className="availability"><span /> Available for work</div>
+        <div className="topbar__status"><i /> Available / 2026</div>
       </header>
 
       <main>
-        <section className="hero" id="top">
-          <div className="hero__eyebrow">
-            <span>Creative developer</span>
-            <span>Karachi · PK {time}</span>
+        <section className="editorial-hero" id="top">
+          <div className="hero-grid" aria-hidden="true">
+            <i /><i /><i /><i />
           </div>
-          <div className="hero__title" aria-label="I engineer digital worlds">
-            <div className="title-line title-line--one"><span>I engineer</span></div>
-            <div className="title-line title-line--two"><span>digital worlds.</span></div>
+
+          <div className="hero-object" aria-hidden="true">
+            <EditorialObject />
           </div>
-          <div className="hero__footer">
-            <p>
-              Full-stack developer crafting high-impact digital experiences
-              where technology, motion, and purpose converge.
-            </p>
-            <a href="#work" className="scroll-cue">
-              <span>Enter the archive</span>
-              <Arrow />
-            </a>
+
+          <div className="hero-label hero-label--one">Issue 01 / Folio</div>
+          <div className="hero-label hero-label--two">Full-stack + Motion</div>
+          <div className="hero-label hero-label--three">Karachi, Pakistan</div>
+
+          <h1 className="masthead">
+            <span className="masthead__line"><b>©26</b><strong>UZAIR</strong></span>
+            <span className="masthead__line masthead__line--shift"><strong>FULL-STACK</strong></span>
+            <span className="masthead__line"><strong>DEVELOPER</strong></span>
+            <span className="masthead__line masthead__line--last">
+              <strong>WITH</strong><em>(MOTION)</em>
+            </span>
+          </h1>
+
+          <div className="hero-stamp">
+            <span>Scroll to explore</span>
+            <b>↓</b>
           </div>
-          <div className="hero__coordinates">24.8607° N<br />67.0011° E</div>
-          <div className="hero__chapter">CH / 001</div>
+          <div className="hero-note">
+            Digital products, expressive interfaces<br />
+            and systems built to last.
+          </div>
         </section>
 
-        <section className="manifesto" id="about">
-          <div className="section-kicker" data-reveal>
+        <section className="profile" id="profile">
+          <div className="rail-title">
             <span>01</span>
-            <span>What I do</span>
+            <p>Profile / Approach</p>
           </div>
-          <p className="manifesto__statement" data-reveal>
-            I turn ambitious ideas into{" "}
-            <em>digital experiences</em> that feel inevitable.
-          </p>
-          <div className="manifesto__details">
-            <p data-reveal>
-              From systems that run businesses to interfaces that stop a
-              scroll, I work across the full stack to make the complex feel
-              beautifully simple.
-            </p>
-            <div className="capabilities" data-reveal>
-              <span>Creative direction</span>
-              <span>Frontend engineering</span>
-              <span>Full-stack systems</span>
-              <span>Motion &amp; interaction</span>
+
+          <div className="profile__copy">
+            <div className="line-mask"><p data-rise>I design and develop</p></div>
+            <div className="line-mask"><p data-rise>digital work that is</p></div>
+            <div className="line-mask"><p data-rise><em>useful, unusual,</em></p></div>
+            <div className="line-mask"><p data-rise>and impossible to ignore.</p></div>
+          </div>
+
+          <div className="profile__foot">
+            <div className="profile__portrait" data-fade>
+              <div className="portrait-code">UZ<br />/26</div>
+              <span>Portrait pending</span>
             </div>
+            <p data-fade>
+              I work across design and engineering, moving from early concepts
+              to production code. The goal is always the same: clarity,
+              character, and an experience that earns attention.
+            </p>
+            <ul data-fade>
+              <li>Creative frontend</li>
+              <li>Full-stack architecture</li>
+              <li>Interaction systems</li>
+              <li>3D web experiences</li>
+            </ul>
           </div>
         </section>
 
-        <section className="work" id="work">
-          <div className="work__heading">
-            <div className="section-kicker" data-reveal>
+        <section className="work-index" id="work">
+          <div className="index-head">
+            <div className="rail-title">
               <span>02</span>
-              <span>Selected transmissions</span>
+              <p>Selected Work / 22—26</p>
             </div>
-            <h2 data-reveal>Work across<br />the years.</h2>
+            <h2>
+              <span>Project</span>
+              <span>Index</span>
+            </h2>
+            <p>Three selected stories from years of designing and building for the web.</p>
           </div>
 
-          <div className="project-list">
+          <div className="projects">
             {projects.map((project) => (
-              <article
-                className="project-row"
-                key={project.index}
-                style={{ "--project-color": project.color } as React.CSSProperties}
-              >
-                <div className="project-row__meta">
-                  <span>{project.index}</span>
+              <article className={`project project--${project.tone}`} key={project.no}>
+                <div className="project__topline">
+                  <span>{project.no} / 03</span>
+                  <span>{project.discipline}</span>
                   <span>{project.year}</span>
                 </div>
-                <div className="project-row__main">
-                  <p>{project.type}</p>
-                  <h3>{project.title}</h3>
-                  <p className="project-row__copy">{project.copy}</p>
+                <div className="project__visual" aria-hidden="true">
+                  <div className="visual-grid" />
+                  <div className="visual-card">
+                    <span>{project.no}</span>
+                    <b>UZ / SELECTED</b>
+                  </div>
+                  <div className="visual-orbit" />
                 </div>
-                <button className="project-row__button" aria-label={`Explore ${project.title}`}>
-                  <Arrow diagonal />
-                </button>
+                <div className="project__body">
+                  <h3>{project.name}</h3>
+                  <p>{project.description}</p>
+                  <button aria-label={`Open ${project.name}`}>
+                    View case study <NorthEast />
+                  </button>
+                </div>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="interlude">
-          <p data-reveal>Built to move.</p>
-          <div className="marquee" aria-hidden="true">
-            <div>
-              <span>Code</span><i>✦</i><span>Motion</span><i>✦</i>
-              <span>Systems</span><i>✦</i><span>Ideas</span><i>✦</i>
-              <span>Code</span><i>✦</i><span>Motion</span><i>✦</i>
-            </div>
+        <section className="ticker" aria-hidden="true">
+          <div>
+            <span>Design</span><i>+</i><span>Code</span><i>+</i><span>Motion</span><i>+</i>
+            <span>Design</span><i>+</i><span>Code</span><i>+</i><span>Motion</span><i>+</i>
           </div>
         </section>
 
-        <section className="contact" id="contact">
-          <div className="section-kicker" data-reveal>
-            <span>03</span>
-            <span>Open channel</span>
+        <section className="contact-sheet" id="contact">
+          <div className="contact-sheet__meta">
+            <span>03 / Contact</span>
+            <span>Open for selected work</span>
+            <span>PKT / GMT+5</span>
           </div>
-          <p className="contact__pre" data-reveal>Have something impossible in mind?</p>
-          <a
-            className="contact__link"
-            href="mailto:stronghold.kingdom.777@gmail.com"
-            data-reveal
-          >
-            Let&apos;s make it real.<Arrow diagonal />
+          <p>Have a project in mind?</p>
+          <a href="mailto:stronghold.kingdom.777@gmail.com">
+            <span>LET&apos;S</span>
+            <span>MAKE IT</span>
+            <em>REAL.</em>
+            <NorthEast />
           </a>
           <footer>
-            <span>© {new Date().getFullYear()} Uzair</span>
+            <span>©2026 Uzair</span>
             <div>
               <a href="https://github.com/espresso-gg" target="_blank" rel="noreferrer">GitHub</a>
               <a href="mailto:stronghold.kingdom.777@gmail.com">Email</a>
             </div>
-            <span>Designed in code</span>
+            <span>Built from scratch</span>
           </footer>
         </section>
       </main>
