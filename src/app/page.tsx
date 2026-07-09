@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import CursorCompanion from "@/components/cursor-companion";
 
 const EditorialObject = dynamic(() => import("@/components/core-scene"), {
   ssr: false,
@@ -158,6 +159,7 @@ export default function Home() {
 
   return (
     <div ref={scope} className="folio">
+      <CursorCompanion />
       <div className={`intro ${ready ? "intro--out" : ""}`} aria-hidden="true">
         <div className="intro__counter">©26</div>
         <div className="intro__bar"><i /></div>
@@ -261,7 +263,11 @@ export default function Home() {
             <div className="axis-progress"><i /></div>
             <div className="horizontal-track">
               {projects.map((project) => (
-                <article className={`project project--${project.tone}`} key={project.no}>
+                <article
+                  className={`project project--${project.tone}`}
+                  data-project={project.no}
+                  key={project.no}
+                >
                   <div className="project__topline">
                     <span>{project.no} / 03</span>
                     <span>{project.discipline}</span>
