@@ -87,6 +87,67 @@ export default function Home() {
           scrub: 1,
         },
       });
+
+      const media = gsap.matchMedia();
+      media.add("(min-width: 761px)", () => {
+        const track = document.querySelector<HTMLElement>(".horizontal-track");
+        const progress = document.querySelector<HTMLElement>(".axis-progress i");
+        if (!track) return;
+
+        const horizontal = gsap.to(track, {
+          x: () => -(track.scrollWidth - window.innerWidth),
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".horizontal-stage",
+            pin: true,
+            scrub: 1,
+            start: "top top",
+            end: () => `+=${track.scrollWidth - window.innerWidth}`,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+            onUpdate: (self) => {
+              if (progress) progress.style.transform = `scaleX(${self.progress})`;
+            },
+          },
+        });
+
+        gsap.to(".axis-word", {
+          xPercent: -42,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".horizontal-stage",
+            start: "top top",
+            end: () => `+=${track.scrollWidth - window.innerWidth}`,
+            scrub: 1.4,
+          },
+        });
+
+        gsap.utils.toArray<HTMLElement>(".visual-card").forEach((card, index) => {
+          gsap.fromTo(
+            card,
+            { xPercent: index % 2 ? 35 : -30, yPercent: index % 2 ? -12 : 16 },
+            {
+              xPercent: index % 2 ? -20 : 22,
+              yPercent: index % 2 ? 15 : -12,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: horizontal,
+                start: "left right",
+                end: "right left",
+                scrub: true,
+              },
+            },
+          );
+        });
+
+        return () => {
+          horizontal.scrollTrigger?.kill();
+          horizontal.kill();
+        };
+      });
+
+      return () => media.revert();
     }, scope);
 
     return () => {
@@ -191,31 +252,44 @@ export default function Home() {
             <p>Three selected stories from years of designing and building for the web.</p>
           </div>
 
-          <div className="projects">
-            {projects.map((project) => (
-              <article className={`project project--${project.tone}`} key={project.no}>
-                <div className="project__topline">
-                  <span>{project.no} / 03</span>
-                  <span>{project.discipline}</span>
-                  <span>{project.year}</span>
-                </div>
-                <div className="project__visual" aria-hidden="true">
-                  <div className="visual-grid" />
-                  <div className="visual-card">
-                    <span>{project.no}</span>
-                    <b>UZ / SELECTED</b>
+          <div className="horizontal-stage">
+            <div className="axis-word" aria-hidden="true">Selected / Selected / Selected</div>
+            <div className="axis-ui">
+              <span>Vertical input</span>
+              <span>Horizontal output →</span>
+            </div>
+            <div className="axis-progress"><i /></div>
+            <div className="horizontal-track">
+              {projects.map((project) => (
+                <article className={`project project--${project.tone}`} key={project.no}>
+                  <div className="project__topline">
+                    <span>{project.no} / 03</span>
+                    <span>{project.discipline}</span>
+                    <span>{project.year}</span>
                   </div>
-                  <div className="visual-orbit" />
-                </div>
-                <div className="project__body">
-                  <h3>{project.name}</h3>
-                  <p>{project.description}</p>
-                  <button aria-label={`Open ${project.name}`}>
-                    View case study <NorthEast />
-                  </button>
-                </div>
-              </article>
-            ))}
+                  <div className="project__visual" aria-hidden="true">
+                    <div className="visual-grid" />
+                    <div className="visual-card">
+                      <span>{project.no}</span>
+                      <b>UZ / SELECTED</b>
+                    </div>
+                    <div className="visual-orbit" />
+                  </div>
+                  <div className="project__body">
+                    <h3>{project.name}</h3>
+                    <p>{project.description}</p>
+                    <button aria-label={`Open ${project.name}`}>
+                      View case study <NorthEast />
+                    </button>
+                  </div>
+                </article>
+              ))}
+              <aside className="axis-outro">
+                <span>End of index / 03</span>
+                <p>Different<br />directions.<br /><em>One intent.</em></p>
+                <a href="#contact">Continue vertically <b>↓</b></a>
+              </aside>
+            </div>
           </div>
         </section>
 
