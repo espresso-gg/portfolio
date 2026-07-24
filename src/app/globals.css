@@ -150,6 +150,10 @@ button { color: inherit; font: inherit; }
   padding: 62px 2vw 2vw;
   overflow: hidden;
   isolation: isolate;
+  background:
+    radial-gradient(circle at 72% 36%, rgba(157,21,21,.18), transparent 18rem),
+    radial-gradient(circle at 40% 88%, rgba(18,16,13,.18), transparent 28rem),
+    linear-gradient(180deg, rgba(248,239,207,.22), rgba(199,164,106,.18));
 }
 .shoji {
   position: absolute;
@@ -164,20 +168,21 @@ button { color: inherit; font: inherit; }
 }
 .brush-sky {
   position: absolute;
-  top: 11%;
-  left: -14%;
+  top: 12%;
+  left: -12%;
   z-index: 0;
-  width: 78vw;
-  height: 19vh;
+  width: 92vw;
+  height: 24vh;
   background: var(--ink);
-  clip-path: polygon(0 18%, 13% 2%, 31% 23%, 48% 6%, 64% 26%, 100% 9%, 93% 34%, 72% 28%, 55% 53%, 32% 38%, 16% 68%, 0 52%);
-  opacity: .88;
+  clip-path: polygon(0 24%, 14% 4%, 28% 27%, 45% 9%, 63% 25%, 82% 8%, 100% 17%, 93% 43%, 77% 34%, 59% 62%, 37% 46%, 18% 72%, 0 58%);
+  opacity: .82;
   filter: url("#rough");
+  mix-blend-mode: multiply;
 }
 .sun-seal {
   position: absolute;
-  right: 8vw;
-  top: 20vh;
+  right: 10vw;
+  top: 17vh;
   z-index: 0;
   width: 15vw;
   min-width: 128px;
@@ -186,9 +191,63 @@ button { color: inherit; font: inherit; }
   background:
     radial-gradient(circle, rgba(18,16,13,.14) 1px, transparent 1.4px) 0 0 / 13px 13px,
     var(--blood);
-  opacity: .9;
+  opacity: .86;
   mix-blend-mode: multiply;
 }
+.mist-layer {
+  position: absolute;
+  z-index: 1;
+  width: 72vw;
+  height: 26vh;
+  pointer-events: none;
+  opacity: .24;
+  filter: blur(16px);
+  background: radial-gradient(ellipse at center, rgba(248,239,207,.82), rgba(248,239,207,.18) 56%, transparent 72%);
+}
+.mist-layer--one { left: -16vw; top: 42vh; }
+.mist-layer--two { right: -22vw; top: 56vh; opacity: .2; }
+.mountain-range {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--ink);
+  transform-origin: bottom;
+  mix-blend-mode: multiply;
+}
+.mountain-range--back {
+  bottom: 8vh;
+  height: 24vh;
+  opacity: .13;
+  clip-path: polygon(0 72%, 10% 47%, 18% 61%, 27% 31%, 38% 66%, 50% 34%, 62% 59%, 74% 24%, 86% 57%, 100% 30%, 100% 100%, 0 100%);
+}
+.mountain-range--front {
+  bottom: 0;
+  height: 28vh;
+  opacity: .21;
+  clip-path: polygon(0 78%, 9% 44%, 21% 66%, 32% 32%, 45% 72%, 57% 38%, 70% 63%, 84% 35%, 100% 70%, 100% 100%, 0 100%);
+}
+.torii-gate {
+  position: absolute;
+  right: 9vw;
+  bottom: 6.5vh;
+  z-index: 2;
+  width: 18vw;
+  min-width: 210px;
+  height: 22vh;
+  opacity: .34;
+}
+.torii-gate i {
+  position: absolute;
+  display: block;
+  background: var(--ink);
+  box-shadow: 0 0 0 1px rgba(248,239,207,.14);
+}
+.torii-gate i:nth-child(1) { top: 0; left: 2%; width: 96%; height: 10px; transform: rotate(-2deg); }
+.torii-gate i:nth-child(2) { top: 28px; left: 12%; width: 76%; height: 8px; }
+.torii-gate i:nth-child(3) { top: 28px; left: 21%; width: 10px; height: 100%; }
+.torii-gate i:nth-child(4) { top: 28px; right: 21%; width: 10px; height: 100%; }
 .katana {
   position: absolute;
   right: -2vw;
@@ -217,17 +276,6 @@ button { color: inherit; font: inherit; }
   background: var(--ink);
   box-shadow: inset 0 0 0 2px var(--gold);
 }
-.hero-artifact {
-  position: absolute;
-  right: 15vw;
-  bottom: 22vh;
-  z-index: 1;
-  width: 24vw;
-  height: 24vw;
-  min-width: 250px;
-  min-height: 250px;
-  opacity: .72;
-}
 .hero-meta {
   position: absolute;
   z-index: 4;
@@ -245,30 +293,68 @@ button { color: inherit; font: inherit; }
 .hero-meta--right { top: 19vh; right: 2vw; }
 .ronin-title {
   position: absolute;
-  right: 2vw;
-  bottom: 19vh;
-  left: 2vw;
-  z-index: 3;
+  right: 1.4vw;
+  bottom: 12vh;
+  left: 1.4vw;
+  z-index: 4;
   margin: 0;
-  font-size: clamp(4.4rem, 12vw, 12.9rem);
-  font-weight: 950;
-  line-height: .72;
-  letter-spacing: -.105em;
+  pointer-events: none;
+}
+.title-kicker {
+  display: block;
+  margin-left: 1vw;
+  color: var(--blood);
+  font: italic 400 clamp(3.4rem, 6vw, 6.6rem)/.8 Georgia, serif;
+  letter-spacing: -.07em;
+  text-shadow: 2px 2px 0 rgba(18,16,13,.08);
+}
+.brush-name {
+  position: relative;
+  display: block;
+  margin-top: -.04em;
+  width: max-content;
+  max-width: 100%;
+  color: var(--ink);
+  font: 400 clamp(9rem, 22vw, 22rem)/.62 "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive;
+  letter-spacing: -.08em;
+  text-transform: none;
+  text-shadow:
+    8px 12px 0 rgba(18,16,13,.09),
+    -2px 1px 0 rgba(18,16,13,.22);
+}
+.brush-name::before,
+.brush-name::after {
+  content: "Uzair";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.brush-name::before {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(18,16,13,.34);
+  transform: translate(10px, 9px);
+  opacity: .35;
+}
+.brush-name::after {
+  color: rgba(248,239,207,.18);
+  clip-path: polygon(0 47%, 100% 39%, 100% 54%, 0 62%);
+  transform: translateY(4px);
+  mix-blend-mode: screen;
+}
+.title-subtitle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: -.08em;
+  font: 950 clamp(4.4rem, 11vw, 11.5rem)/.78 Arial, Helvetica, sans-serif;
+  letter-spacing: -.09em;
   text-transform: uppercase;
 }
-.title-row { display: block; }
-.title-row--small {
-  color: var(--blood);
-  font: italic 400 .28em/.8 Georgia, serif;
-  letter-spacing: -.05em;
-  text-transform: none;
+.title-subtitle b {
+  color: var(--ink);
+  text-shadow: 5px 7px 0 rgba(18,16,13,.09);
 }
-.title-row--split {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.title-row--split em {
+.title-subtitle em {
   color: transparent;
   -webkit-text-stroke: 2px var(--ink);
   font-style: normal;
@@ -277,8 +363,8 @@ button { color: inherit; font: inherit; }
   position: absolute;
   left: 2vw;
   bottom: 3.4vh;
-  z-index: 4;
-  width: min(460px, 38vw);
+  z-index: 5;
+  width: min(470px, 38vw);
   margin: 0;
   padding: 12px 14px;
   border: 1px solid rgba(18,16,13,.18);
@@ -292,7 +378,7 @@ button { color: inherit; font: inherit; }
   position: absolute;
   right: 2vw;
   bottom: 3vh;
-  z-index: 4;
+  z-index: 5;
   display: flex;
   gap: 28px;
   align-items: center;
@@ -914,15 +1000,21 @@ button { color: inherit; font: inherit; }
   .ronin-nav p { font-size: 8px; }
   .ronin-hero { min-height: 920px; padding: 56px 14px 20px; }
   .shoji { background-size: 80px 80px; }
-  .brush-sky { top: 12%; width: 112vw; height: 16vh; }
+  .brush-sky { top: 13%; width: 118vw; height: 18vh; }
   .sun-seal { right: 18px; top: 22vh; width: 128px; }
+  .mist-layer { width: 120vw; height: 20vh; }
+  .mist-layer--one { top: 47vh; left: -36vw; }
+  .mist-layer--two { top: 61vh; right: -46vw; }
+  .mountain-range--back { bottom: 6vh; height: 18vh; }
+  .mountain-range--front { height: 22vh; }
+  .torii-gate { right: -26px; bottom: 70px; min-width: 170px; height: 160px; opacity: .25; }
   .katana { width: 96vw; top: 38vh; right: -24vw; }
-  .hero-artifact { right: -34px; bottom: 32vh; width: 290px; height: 290px; }
   .hero-meta--left { top: 17vh; left: 14px; }
   .hero-meta--right { display: none; }
-  .ronin-title { right: 14px; bottom: 19vh; left: 14px; font-size: 22vw; }
-  .title-row--split { display: block; }
-  .title-row--split em { display: block; -webkit-text-stroke-width: 1px; }
+  .ronin-title { right: 14px; bottom: 185px; left: 14px; }
+  .brush-name { font-size: 36vw; line-height: .7; letter-spacing: -.1em; }
+  .title-subtitle { display: block; font-size: 18vw; }
+  .title-subtitle em { display: block; -webkit-text-stroke-width: 1px; }
   .hero-copy { left: 14px; bottom: 78px; width: calc(100% - 28px); }
   .scroll-ritual { right: 14px; bottom: 22px; }
   .manifesto, .weapons { padding: 86px 14px; min-height: auto; }

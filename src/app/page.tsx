@@ -1,14 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CursorCompanion from "@/components/cursor-companion";
-
-const RoninArtifact = dynamic(() => import("@/components/core-scene"), {
-  ssr: false,
-});
 
 const missions = [
   {
@@ -120,15 +115,27 @@ export default function Home() {
         },
       });
 
-      gsap.to(".hero-artifact", {
-        yPercent: 26,
-        rotate: 4,
+      gsap.to(".mist-layer--one", {
+        xPercent: 18,
+        yPercent: -8,
         ease: "none",
         scrollTrigger: {
           trigger: ".ronin-hero",
           start: "top top",
           end: "bottom top",
           scrub: 1,
+        },
+      });
+
+      gsap.to(".mist-layer--two", {
+        xPercent: -24,
+        yPercent: 14,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".ronin-hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.4,
         },
       });
 
@@ -243,11 +250,14 @@ export default function Home() {
           <div className="shoji" aria-hidden="true" />
           <div className="brush-sky" aria-hidden="true" />
           <div className="sun-seal" aria-hidden="true" />
-          <div className="katana" aria-hidden="true"><i /></div>
-
-          <div className="hero-artifact" aria-hidden="true">
-            <RoninArtifact />
+          <div className="mist-layer mist-layer--one" aria-hidden="true" />
+          <div className="mist-layer mist-layer--two" aria-hidden="true" />
+          <div className="mountain-range mountain-range--back" aria-hidden="true" />
+          <div className="mountain-range mountain-range--front" aria-hidden="true" />
+          <div className="torii-gate" aria-hidden="true">
+            <i /><i /><i /><i />
           </div>
+          <div className="katana" aria-hidden="true"><i /></div>
 
           <div className="hero-meta hero-meta--left">
             <span>Code Ronin</span>
@@ -259,11 +269,11 @@ export default function Home() {
           </div>
 
           <h1 className="ronin-title">
-            <span className="title-row title-row--small">The</span>
-            <span className="title-row">UZAIR</span>
-            <span className="title-row title-row--split">
-              <b>CODE</b>
-              <em>RONIN</em>
+            <span className="title-kicker">The</span>
+            <span className="brush-name">Uzair</span>
+            <span className="title-subtitle">
+              <b>Code</b>
+              <em>Ronin</em>
             </span>
           </h1>
 
