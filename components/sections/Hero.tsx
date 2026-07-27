@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { LunarField } from "@/components/motion/LunarField";
-import { LunarWebGL } from "@/components/motion/LunarWebGL";
 import { MagneticLink } from "@/components/ui/MagneticLink";
+import { LunarWebGL } from "@/components/motion/LunarWebGL";
 import type { HeroContent, StoryBeat } from "@/lib/types";
 import { gsap } from "@/lib/gsap";
 
@@ -23,6 +22,19 @@ export function Hero({ content, beats }: HeroProps) {
       return undefined;
     }
 
+    const image = section.querySelector<HTMLElement>(".lunar-art__image");
+    const atmosphere = section.querySelector<HTMLElement>(".lunar-atmosphere");
+    const handlePointerMove = (event: PointerEvent) => {
+      const x = event.clientX / window.innerWidth - 0.5;
+      const y = event.clientY / window.innerHeight - 0.5;
+      image?.style.setProperty("--lunar-drift-x", `${x * -0.7}%`);
+      image?.style.setProperty("--lunar-drift-y", `${y * -0.45}%`);
+      atmosphere?.style.setProperty("--lunar-glow-x", `${50 + x * 8}%`);
+      atmosphere?.style.setProperty("--lunar-glow-y", `${52 + y * 7}%`);
+    };
+
+    section.addEventListener("pointermove", handlePointerMove);
+
     const context = gsap.context(() => {
       const timeline = gsap.timeline({ defaults: { ease: "power4.out" } });
 
@@ -34,46 +46,53 @@ export function Hero({ content, beats }: HeroProps) {
         .from(".lunar-copy", { y: 20, autoAlpha: 0, filter: "blur(10px)", duration: 0.9 }, "-=0.55")
         .from(".lunar-bottom-panel", { y: 18, autoAlpha: 0, duration: 0.85 }, "-=0.35");
 
-      const camera = gsap.timeline({
+      const journey = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "bottom bottom",
+          end: "+=220%",
           scrub: 1,
         },
       });
 
-      camera
-        .to(".lunar-title", { y: -110, autoAlpha: 0, filter: "blur(14px)", duration: 0.26, ease: "none" }, 0.2)
-        .to(".lunar-header", { y: -30, autoAlpha: 0.35, duration: 0.25, ease: "none" }, 0.18)
-        .to(".lunar-bottom-panel", { autoAlpha: 0, duration: 0.12, ease: "none" }, 0.14)
-        .to(".lunar-story-layer", { autoAlpha: 1, duration: 0.24, ease: "none" }, 0.28)
-        .to(".lunar-story-heading", { y: 0, autoAlpha: 1, duration: 0.2, ease: "none" }, 0.36)
-        .to(".lunar-story-node", { y: 0, autoAlpha: 1, scale: 1, duration: 0.2, stagger: 0.08, ease: "none" }, 0.44)
-        .to(".lunar-story-layer", { autoAlpha: 0, duration: 0.12, ease: "none" }, 0.94);
+      journey
+        .to(".lunar-title", { y: -130, autoAlpha: 0, filter: "blur(16px)", duration: 0.22, ease: "none" }, 0.12)
+        .to(".lunar-header", { y: -24, autoAlpha: 0.34, duration: 0.18, ease: "none" }, 0.1)
+        .to(".lunar-bottom-panel", { autoAlpha: 0, duration: 0.12, ease: "none" }, 0.08)
+        .to(".lunar-art__image", { scale: 1.18, autoAlpha: 0.08, transformOrigin: "50% 25%", filter: "saturate(1.18) contrast(1.08) brightness(0.95)", duration: 0.58, ease: "none" }, 0)
+        .to(".lunar-atmosphere", { opacity: 0.25, duration: 0.5, ease: "none" }, 0.16)
+        .to(".lunar-story-layer", { autoAlpha: 1, visibility: "visible", duration: 0.18, ease: "none" }, 0.42)
+        .to(".lunar-story-heading", { y: 0, autoAlpha: 1, duration: 0.16, ease: "none" }, 0.5)
+        .to(".lunar-story-node", { y: 0, autoAlpha: 1, scale: 1, duration: 0.14, stagger: 0.08, ease: "none" }, 0.58);
 
-      gsap.to(".lunar-art", {
-        y: -18,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: true,
-        },
-      });
     }, section);
 
-    return () => context.revert();
+    return () => {
+      section.removeEventListener("pointermove", handlePointerMove);
+      context.revert();
+    };
   }, []);
 
   return (
-    <section ref={sectionRef} className="hero-section lunar-hero lunar-journey" id="home" aria-labelledby="hero-title">
+    <section ref={sectionRef} className="hero-section lunar-hero lunar-journey lunar-scene-test" id="home" aria-labelledby="hero-title">
       <div className="lunar-art" aria-hidden="true">
+        <div
+          className="lunar-art__image"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: "url('/lunar-stage1-bg.png')",
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            opacity: 1,
+          }}
+        />
       </div>
-
       <LunarWebGL />
-      <div className="lunar-story-layer" id="story" aria-labelledby="story-title">
+      <div className="lunar-atmosphere" aria-hidden="true" />
+      <div className="lunar-story-layer" id="story" aria-labelledby="story-title" style={{ display: "none" }}>
         <div className="lunar-story-heading">
           <p className="orbit-kicker">01 / Lunar orbit story</p>
           <h2 id="story-title">Three phases shaped the work.</h2>
@@ -91,19 +110,22 @@ export function Hero({ content, beats }: HeroProps) {
             </article>
           ))}
         </div>
+        <div className="lunar-journey-progress" aria-hidden="true">
+          <span className="is-active" />
+          <span />
+          <span />
+        </div>
       </div>
-      <LunarField />
-      <div className="lunar-atmosphere" aria-hidden="true" />
 
-      <div className="lunar-shell">
+      <div className="lunar-shell" style={{ display: "none" }}>
         <header className="lunar-header">
           <div className="lunar-brand">
             <span className="lunar-brand-mark">UK</span>
             <span>Uzair Khurshid</span>
           </div>
           <nav className="lunar-nav" aria-label="Portfolio sections">
-            <a href="#story">Home</a>
-            <a href="#story">About</a>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
             <a href="#projects">Work</a>
             <a href="#skills">Skills</a>
             <a href="#journey">Journey</a>

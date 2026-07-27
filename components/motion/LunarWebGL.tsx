@@ -5,8 +5,8 @@ import * as THREE from "three";
 
 function makeMoonTexture() {
   const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 512;
+  canvas.width = 2048;
+  canvas.height = 1024;
   const context = canvas.getContext("2d");
   if (!context) return null;
 
@@ -17,19 +17,24 @@ function makeMoonTexture() {
   context.fillStyle = gradient;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  for (let index = 0; index < 220; index += 1) {
+  for (let index = 0; index < 360; index += 1) {
     const x = Math.random() * canvas.width;
     const y = Math.random() * canvas.height;
-    const radius = Math.random() * 15 + 2;
-    const alpha = Math.random() * 0.18 + 0.04;
-    context.fillStyle = `rgba(49, 87, 111, ${alpha})`;
+    const radius = Math.random() * 30 + 5;
+    const crater = context.createRadialGradient(x - radius * 0.18, y - radius * 0.2, radius * 0.08, x, y, radius);
+    crater.addColorStop(0, `rgba(238, 249, 255, ${Math.random() * 0.1 + 0.04})`);
+    crater.addColorStop(0.52, `rgba(69, 102, 124, ${Math.random() * 0.16 + 0.06})`);
+    crater.addColorStop(0.78, `rgba(30, 59, 78, ${Math.random() * 0.2 + 0.08})`);
+    crater.addColorStop(1, "rgba(32, 61, 80, 0)");
+    context.fillStyle = crater;
     context.beginPath();
-    context.arc(x, y, radius, 0, Math.PI * 2);
+    context.ellipse(x, y, radius, radius * (Math.random() * 0.22 + 0.78), Math.random() * Math.PI, 0, Math.PI * 2);
     context.fill();
   }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
   return texture;
 }
 
@@ -46,23 +51,29 @@ export function LunarWebGL() {
     renderer.setSize(window.innerWidth, window.innerHeight, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.08;
+    renderer.toneMappingExposure = 0.82;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0.1, 15.5);
 
     const moonTexture = makeMoonTexture();
-    const moon = new THREE.Mesh(
-      new THREE.SphereGeometry(2.72, 96, 64),
-      new THREE.MeshStandardMaterial({ map: moonTexture ?? undefined, roughness: 0.9, metalness: 0.02, emissive: 0x2e5d78, emissiveIntensity: 0.12 }),
-    );
+    const moonMaterial = new THREE.MeshStandardMaterial({
+      map: moonTexture ?? undefined,
+      bumpMap: moonTexture ?? undefined,
+      bumpScale: 0.1,
+      roughness: 0.94,
+      metalness: 0,
+      emissive: 0x1c4058,
+      emissiveIntensity: 0.035,
+    });
+    const moon = new THREE.Mesh(new THREE.SphereGeometry(2.72, 128, 96), moonMaterial);
     moon.position.set(0, 0.15, 0);
     scene.add(moon);
 
     const halo = new THREE.Mesh(
       new THREE.SphereGeometry(3.14, 64, 64),
-      new THREE.MeshBasicMaterial({ color: 0xa9dcff, transparent: true, opacity: 0.1, side: THREE.BackSide, blending: THREE.AdditiveBlending }),
+      new THREE.MeshBasicMaterial({ color: 0x9fdcff, transparent: true, opacity: 0.13, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false }),
     );
     moon.add(halo);
 
@@ -158,11 +169,11 @@ export function LunarWebGL() {
     const dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({ color: 0x99d9ff, size: 0.018, transparent: true, opacity: 0.34, blending: THREE.AdditiveBlending }));
     scene.add(dust);
 
-    scene.add(new THREE.AmbientLight(0x9fd6ff, 1.1));
-    const keyLight = new THREE.DirectionalLight(0xe8f7ff, 3.4);
+    scene.add(new THREE.AmbientLight(0x9fd6ff, 0.72));
+    const keyLight = new THREE.DirectionalLight(0xe8f7ff, 2.6);
     keyLight.position.set(-4, 3, 8);
     scene.add(keyLight);
-    const rimLight = new THREE.PointLight(0x70c9ff, 7, 18, 2);
+    const rimLight = new THREE.PointLight(0x70c9ff, 5.5, 18, 2);
     rimLight.position.set(4, 1, -1);
     scene.add(rimLight);
 
@@ -174,7 +185,9 @@ export function LunarWebGL() {
       const next = reducedMotion ? 0 : THREE.MathUtils.clamp(-rect.top / Math.max(section.offsetHeight - window.innerHeight, 1), 0, 1);
       progress += (next - progress) * 0.085;
       section.style.setProperty("--lunar-progress", progress.toFixed(3));
-      canvas.style.opacity = rect.bottom > 0 && rect.top < window.innerHeight ? "1" : "0";
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight;
+      const blend = THREE.MathUtils.smoothstep(progress, 0.08, 0.38);
+      canvas.style.opacity = visible ? blend.toFixed(3) : "0";
     };
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -183,21 +196,29 @@ export function LunarWebGL() {
     };
     const render = () => {
       updateProgress();
-      const travel = THREE.MathUtils.smoothstep(progress, 0, 1);
-      camera.position.z = THREE.MathUtils.lerp(15.5, 4.65, travel);
-      camera.position.y = THREE.MathUtils.lerp(0.1, 0.18, travel);
-      camera.position.x = Math.sin(progress * Math.PI * 1.3) * 0.34;
-      camera.lookAt(0, 0.15, 0);
-      moon.rotation.y += 0.0018;
-      moon.rotation.x = Math.sin(progress * Math.PI) * 0.04;
-      stars.rotation.y = progress * 0.12;
-      dust.rotation.y -= 0.0008;
-      dust.position.z = progress * 2;
-      mountainGroup.position.z = progress * 2.5;
-      water.position.z = -1.5 + progress * 2.2;
-      rippleGroup.position.z = progress * 2.8;
-      figure.position.z = 0.9 + progress * 1.2;
-      crystalGroup.position.z = progress * 1.6;
+      // Stage 2 ends in a stable lunar orbit. Surface traversal begins in the next scene pass.
+      const travel = THREE.MathUtils.smoothstep(Math.min(progress, 0.78), 0, 0.78);
+      // Three travel beats: deep space, lunar orbit, then atmospheric surface approach.
+      camera.position.z = THREE.MathUtils.lerp(18.5, 8.8, travel);
+      camera.position.y = THREE.MathUtils.lerp(0.2, 0.42, travel);
+      camera.position.x = Math.sin(progress * Math.PI * 1.6) * THREE.MathUtils.lerp(0.1, 0.55, travel);
+      camera.lookAt(0, THREE.MathUtils.lerp(0.1, 0.34, travel), 0);
+      moon.rotation.y += 0.0018 + progress * 0.002;
+      moon.rotation.x = Math.sin(progress * Math.PI) * 0.06;
+      stars.rotation.y = progress * 0.22;
+      stars.position.z = progress * 1.4;
+      dust.rotation.y -= 0.0008 + progress * 0.001;
+      dust.position.z = progress * 4;
+      mountainGroup.position.z = progress * 5;
+      water.position.z = -1.5 + progress * 5;
+      rippleGroup.position.z = progress * 6;
+      horizon.visible = progress < 0.62;
+      water.visible = progress < 0.62;
+      rippleGroup.visible = progress < 0.62;
+      figure.position.z = 0.9 + progress * 3.2;
+      figure.visible = progress < 0.72;
+      crystalGroup.position.z = progress * 4.2;
+      halo.scale.setScalar(THREE.MathUtils.lerp(1, 0.78, travel));
       renderer.render(scene, camera);
       frame = window.requestAnimationFrame(render);
     };

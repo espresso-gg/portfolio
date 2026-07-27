@@ -12,13 +12,19 @@ import { projects } from "@/content/projects";
 import { skillCategories } from "@/content/skills";
 
 export default function Home() {
+  void About;
+  void storyBeats;
+  void Contact;
+  void Skills;
+  void Projects;
+  void Journey;
+  void contactContent;
+  void journey;
+  void projects;
+  void skillCategories;
   return (
     <main id="main-content" className="portfolio-stage">
       <Hero content={heroContent} beats={storyBeats} />
-      <Skills categories={skillCategories} />
-      <Projects projects={projects} />
-      <Journey items={journey} />
-      <Contact content={contactContent} />
     </main>
   );
 }
