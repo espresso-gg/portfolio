@@ -18,37 +18,3 @@ export interface HeroContent {
   intro: string;
   primaryCta: LinkItem;
 }
-
-export interface StoryBeat {
-  label: string;
-  title: string;
-  body: string;
-}
-
-export interface SkillCategory {
-  title: string;
-  summary: string;
-  items: string[];
-}
-
-export interface ProjectItem {
-  title: string;
-  type: string;
-  year: string;
-  stack: string[];
-  summary: string;
-  impact: string;
-}
-
-export interface JourneyItem {
-  period: string;
-  title: string;
-  body: string;
-}
-
-export interface ContactContent {
-  eyebrow: string;
-  title: string;
-  body: string;
-  links: LinkItem[];
-}

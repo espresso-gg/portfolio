@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Uzair Khurshid — Continuous Lunar Portfolio
 
-## Getting Started
+A cinematic Next.js portfolio prototype built as one continuous Lenis-controlled camera journey.
 
-First, run the development server:
+## Journey
+
+The six-screen pinned sequence moves through these connected phases:
+
+1. Distant moonlit landscape
+2. Camera approach toward the same persistent moon
+3. Compressed intergalactic passage
+4. Close lunar orbit with portfolio disciplines around the moon
+5. Descent as the moon expands beyond the camera
+6. Lunar-surface destination and contact invitation
+
+The journey does not swap pages or manage video playback state. A single Lenis scroll value drives every scene variable, so forward scrolling, reverse scrolling, anchor navigation, and refresh restoration remain deterministic.
+
+## Architecture
+
+- `CinematicScrollProvider` owns the global Lenis instance and synchronizes it with the GSAP ticker.
+- `LunarJourney` maps Lenis scroll progress into approach, passage, orbit, descent, and surface ranges.
+- A persistent CSS moon remains spatially continuous across the journey.
+- Landscape, stars, orbital geometry, typography, and surface artwork are composited in one sticky viewport.
+- The surface destination uses a dedicated project artwork rather than procedural placeholder mountains.
+- Reduced-motion mode removes the warp treatment and decorative animation.
+
+## Commands
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Local development runs at [http://127.0.0.1:3000](http://127.0.0.1:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production direction
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The code-native journey is stable and reversible. A future visual upgrade can replace the CSS passage with two purpose-built transition clips or a WebGL camera layer, provided scroll progress remains the sole source of truth.

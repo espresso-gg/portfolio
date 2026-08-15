@@ -1,10 +1,13 @@
 ﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
+import type { Viewport } from "next";
+import { CinematicScrollProvider } from "@/components/motion/CinematicScrollProvider";
 import { siteConfig } from "@/lib/constants";
 import "@fontsource/cormorant-garamond/400.css";
 import "@fontsource/cormorant-garamond/500.css";
-import "@fontsource/cinzel/500.css";
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,6 +26,10 @@ export const metadata: Metadata = {
     "Cinematic portfolio for Uzair Khurshid, a full-stack web developer with roots in WordPress, SEO, content, and real business systems.",
 };
 
+export const viewport: Viewport = {
+  themeColor: "#020611",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +39,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <a className="skip-link" href="#main-content">Skip to content</a>
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <CinematicScrollProvider>{children}</CinematicScrollProvider>
       </body>
     </html>
   );
