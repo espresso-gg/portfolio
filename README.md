@@ -27,6 +27,7 @@ The user's priority is awe and exploration, not a conventional sales portfolio. 
 
 - `components/celestial/CelestialPortfolio.tsx`: semantic content, controls, scroll state, mobile structure.
 - `components/celestial/createMoonWorld.ts`: client-loaded Three.js scene, one textured sphere, orbital lines, seeded stars, camera keyframes, drag handling, disposal.
+- `components/celestial/cameraPath.ts`: continuous camera spline with shared waypoint velocities. Run `node scripts/test-camera-path.mjs` on Node 22.18+ to check waypoint continuity, bounds, and surface clearance.
 - `components/celestial/celestial.module.css`: scoped visual system and responsive/reduced-motion layouts.
 - `components/motion/CinematicScrollProvider.tsx`: Lenis and GSAP scroll synchronization.
 - The legacy section components remain on disk, but are not imported by the active page.
@@ -34,6 +35,8 @@ The user's priority is awe and exploration, not a conventional sales portfolio. 
 Moon dragging and rotation buttons work independently of ambient motion. The light slider changes the key-light direction. The pause control pauses ambient rotation; deliberate scroll and drag interaction remain available. OS reduced-motion disables the camera journey and automatic rotation. Inactive tabs do not render scene frames. Canvas resolution is capped to reduce GPU cost.
 
 The interface never waits behind a blocking loading screen. A CSS moon remains visible until textures are ready; WebGL failure retains that fallback and all portfolio content.
+
+The camera timeline uses measured section positions rather than assuming fixed viewport-height sections. Resize and font changes refresh those measurements. Orbital lines fade through the journey; rotation and light controls settle smoothly, including while ambient motion is paused. Reduced-motion makes manual controls immediate. The moon uses restrained surface relief and directional lighting rather than heavy postprocessing.
 
 ## Assets and credit
 

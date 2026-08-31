@@ -25,6 +25,8 @@ function Emblem({ className = "" }: { className?: string }) {
 export function CelestialPortfolio() {
   const root = useRef<HTMLDivElement>(null);
   const host = useRef<HTMLDivElement>(null);
+  const hero = useRef<HTMLDivElement>(null);
+  const layout = useRef<{ height: number; stops: number[]; end: number } | null>(null);
   const input = useRef<WorldInput>({ travel: 0, turn: 0, tilt: 0, light: .4, paused: false, reduced: false });
   const [sceneState, setSceneState] = useState<"loading" | "ready" | "fallback">("loading");
   const [paused, setPaused] = useState(false);
@@ -36,18 +38,33 @@ export function CelestialPortfolio() {
   const project = projects[selected];
 
   const update = useCallback((scroll: number) => {
-    const travel = scroll / Math.max(1, window.innerHeight);
+    const measured = layout.current;
+    if (!measured) return;
+    const { height, stops, end } = measured;
+    const boundaries = [...stops, end];
+    const positions = [0, 1.3, 2.8, 4, 4.4];
+    let segment = 0;
+    while (segment < 3 && scroll > boundaries[segment + 1]) segment++;
+    const progress = Math.min(1, Math.max(0, (scroll-boundaries[segment]) / Math.max(1, boundaries[segment+1]-boundaries[segment])));
+    const travel = positions[segment] + (positions[segment+1]-positions[segment]) * progress;
     input.current.travel = travel;
     root.current?.style.setProperty("--travel", travel.toFixed(4));
-    root.current?.style.setProperty("--hero-fade", String(Math.max(0, 1 - travel / .7)));
-    const next = travel < .85 ? 0 : travel < 2.4 ? 1 : travel < 3.6 ? 2 : 3;
+    const limit = (value: number) => Math.min(1,Math.max(0,value));
+    const heroFade = limit(1-scroll/Math.max(1,stops[1]*.65));
+    root.current?.style.setProperty("--hero-fade", String(heroFade));
+    root.current?.style.setProperty("--atlas-fade", String(limit((stops[2]-scroll-height*.2)/(height*.65))));
+    root.current?.style.setProperty("--maker-fade", String(limit((scroll-stops[2]+height*.65)/(height*.5))*limit((stops[3]-scroll-height*.15)/(height*.5))));
+    if (hero.current) hero.current.inert = !input.current.reduced && heroFade < .05;
+    let next = 0;
+    stops.forEach((top, i) => { if (scroll + height*.4 >= top) next = i; });
     if (next !== chapterRef.current) { chapterRef.current = next; setChapter(next); }
   }, []);
   useLenis(instance => update(instance.scroll), [update]);
 
   useEffect(() => {
     input.current.paused = paused; input.current.reduced = reduced; input.current.light = light;
-  }, [paused, reduced, light]);
+    update(window.scrollY);
+  }, [paused, reduced, light, update]);
 
   useEffect(() => {
     let disposed = false;
@@ -59,10 +76,26 @@ export function CelestialPortfolio() {
       } catch { setSceneState("fallback"); }
     }).catch(() => { if (!disposed) setSceneState("fallback"); });
     const onScroll = () => update(window.scrollY);
+    const measure = () => {
+      if (disposed || !root.current) return;
+      const sections = [...root.current.querySelectorAll<HTMLElement>('main > section')];
+      layout.current = {
+        height: Math.max(1,window.innerHeight),
+        stops: sections.map(section => section.getBoundingClientRect().top+window.scrollY),
+        end: Math.max(1,document.documentElement.scrollHeight-window.innerHeight),
+      };
+      onScroll();
+    };
+    const observer = new ResizeObserver(measure);
+    if (root.current) {
+      observer.observe(root.current);
+      root.current.querySelectorAll('main > section').forEach(section=>observer.observe(section));
+    }
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    onScroll();
-    return () => { disposed = true; cleanup?.(); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    window.addEventListener("resize", measure);
+    document.fonts.ready.then(measure);
+    measure();
+    return () => { disposed = true; cleanup?.(); observer.disconnect(); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", measure); };
   }, [update]);
 
   const rotate = (direction: number) => { input.current.turn += direction * .3; };
@@ -94,7 +127,7 @@ export function CelestialPortfolio() {
 
       <main id="main-content" className={styles.content}>
         <section id="arrival" className={styles.arrival} aria-labelledby="arrival-title">
-          <div className={styles.heroInner}>
+          <div ref={hero} className={styles.heroInner}>
             <div className={styles.titleGroup}><p>Web developer · Curious by nature</p><h1 id="arrival-title">Uzair Khurshid</h1><span className={styles.titleRule}/><p className={styles.tagline}>A small world of things I’ve built.<br/>And things I’m still discovering.</p></div>
             <div className={styles.heroFoot}><p>Based on Earth.<br/><span>Open to the unexpected.</span></p><a href="#atlas" className={styles.scrollPrompt}><span>Begin the journey</span><i aria-hidden="true"/></a><p className={styles.dragHint}>{sceneState==="fallback"?"Still view · 3D unavailable":"The moon is yours to turn."}<br/><span>{sceneState==="fallback"?"Explore the chapters below":"Drag to explore · Scroll to approach"}</span></p></div>
           </div>
