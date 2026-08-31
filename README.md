@@ -1,39 +1,60 @@
-# Uzair Khurshid — Continuous Lunar Portfolio
+# Uzair Khurshid — A Personal Orbit
 
-A cinematic Next.js portfolio prototype built as one continuous Lenis-controlled camera journey.
+A playful celestial portfolio: one interactive moon, a continuous camera journey, and a restrained fantasy-game interface.
 
-## Journey
+## Run
 
-The six-screen pinned sequence moves through these connected phases:
+```bash
+npm ci
+npm run dev
+```
 
-1. Distant moonlit landscape
-2. Camera approach toward the same persistent moon
-3. Compressed intergalactic passage
-4. Close lunar orbit with portfolio disciplines around the moon
-5. Descent as the moon expands beyond the camera
-6. Lunar-surface destination and contact invitation
+Local preview: http://127.0.0.1:3000
+Checks: `npm run lint`, `npm run build`.
 
-The journey does not swap pages or manage video playback state. A single Lenis scroll value drives every scene variable, so forward scrolling, reverse scrolling, anchor navigation, and refresh restoration remain deterministic.
+## Design direction — August 31, 2026
+
+The user's priority is awe and exploration, not a conventional sales portfolio. The previous image-based version felt generic, artificial in motion, and disconnected. This redesign removes those landscape sections from the active route.
+
+- Arrival: one large moon and Uzair Khurshid's name.
+- Atlas: select Systems, Experiments, or Origins to explore projects.
+- Maker: a brief personal background in the same celestial space.
+- Signal: approach the lunar horizon and make contact.
+- Style: dark celestial blue, silver, subdued brass; Cinzel, Cormorant Garamond, Instrument Serif, Geist.
+- References studied: Genshin's official site, Rebelliously Optimistic, Zainab Kabira, Momento Legal. No artwork or source code copied from these sites.
 
 ## Architecture
 
-- `CinematicScrollProvider` owns the global Lenis instance and synchronizes it with the GSAP ticker.
-- `LunarJourney` maps Lenis scroll progress into approach, passage, orbit, descent, and surface ranges.
-- A persistent CSS moon remains spatially continuous across the journey.
-- Landscape, stars, orbital geometry, typography, and surface artwork are composited in one sticky viewport.
-- The surface destination uses a dedicated project artwork rather than procedural placeholder mountains.
-- Reduced-motion mode removes the warp treatment and decorative animation.
+- `components/celestial/CelestialPortfolio.tsx`: semantic content, controls, scroll state, mobile structure.
+- `components/celestial/createMoonWorld.ts`: client-loaded Three.js scene, one textured sphere, orbital lines, seeded stars, camera keyframes, drag handling, disposal.
+- `components/celestial/celestial.module.css`: scoped visual system and responsive/reduced-motion layouts.
+- `components/motion/CinematicScrollProvider.tsx`: Lenis and GSAP scroll synchronization.
+- The legacy section components remain on disk, but are not imported by the active page.
 
-## Commands
+Moon dragging and rotation buttons work independently of ambient motion. The light slider changes the key-light direction. The pause control pauses ambient rotation; deliberate scroll and drag interaction remain available. OS reduced-motion disables the camera journey and automatic rotation. Inactive tabs do not render scene frames. Canvas resolution is capped to reduce GPU cost.
 
-```bash
-npm run dev
-npm run lint
-npm run build
-```
+The interface never waits behind a blocking loading screen. A CSS moon remains visible until textures are ready; WebGL failure retains that fallback and all portfolio content.
 
-Local development runs at [http://127.0.0.1:3000](http://127.0.0.1:3000).
+## Assets and credit
 
-## Production direction
+The moon uses real lunar maps from NASA's Scientific Visualization Studio, CGI Moon Kit (Ernie Wright; LRO/LROC/LOLA data). These are aesthetics-oriented rendering maps, not scientific measurements in this website.
 
-The code-native journey is stable and reversible. A future visual upgrade can replace the CSS passage with two purpose-built transition clips or a WebGL camera layer, provided scroll progress remains the sole source of truth.
+Source: https://svs.gsfc.nasa.gov/4720/
+- `public/moon-color.jpg`: https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_2k.jpg
+- `public/moon-height.jpg`: https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/ldem_3_8bit.jpg
+
+Combined texture delivery: approximately 570 KB. All rendering is local to the browser. No paid service or generated landscape is used in the active scene.
+
+## Still needed
+
+Real project screenshots, recordings, repository/demo destinations, and descriptions from Uzair. Current project descriptions preserve the existing portfolio information; no outcomes or proof have been invented. Until verified project links are supplied, project actions open an email draft.
+
+## Recovery and publishing
+
+The previous local design's source/configuration files were copied to:
+`C:/Users/uzair/Projects/portfolio-checkpoints/before-celestial-2026-08-31`
+
+Backup filenames replace directory separators with double underscores. Original artwork remains in `public`.
+The active redesign is maintained on `main` in https://github.com/espresso-gg/uzair-portfolio.
+To continue on another computer, clone that repository, run `npm ci`, then `npm run dev`.
+The local recovery folder above is not included in Git. Deployment is managed separately through the repository's Vercel integration.

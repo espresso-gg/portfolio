@@ -1,12 +1,5 @@
-import { LunarJourney } from "@/components/sections/LunarJourney";
-import { PortfolioChapters } from "@/components/sections/PortfolioChapters";
-import { heroContent } from "@/content/hero";
+import { CelestialPortfolio } from "@/components/celestial/CelestialPortfolio";
 
 export default function Home() {
-  return (
-    <main id="main-content">
-      <LunarJourney content={heroContent} />
-      <PortfolioChapters />
-    </main>
-  );
+  return <CelestialPortfolio />;
 }

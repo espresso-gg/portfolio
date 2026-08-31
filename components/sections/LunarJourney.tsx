@@ -2,7 +2,6 @@
 
 import { useLenis } from "lenis/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import type { HeroContent } from "@/lib/types";
 
 type JourneyPhase = "origin" | "approach" | "passage" | "orbit" | "descent" | "surface" | "exit";
@@ -11,6 +10,8 @@ const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, v
 const range = (progress: number, start: number, end: number) => clamp((progress - start) / (end - start));
 const smoothstep = (value: number) => value * value * (3 - 2 * value);
 const smootherstep = (value: number) => value * value * value * (value * (value * 6 - 15) + 10);
+const exposure = (progress: number, start: number, ready: number, leave: number, end: number) =>
+  smoothstep(range(progress, start, ready)) * (1 - smoothstep(range(progress, leave, end)));
 
 function phaseFromProgress(progress: number): JourneyPhase {
   if (progress < 0.18) return "origin";
@@ -37,9 +38,9 @@ export function LunarJourney({ content }: { content: HeroContent }) {
     const passage = smoothstep(range(progress, 0.34, 0.47));
     const orbit = smoothstep(range(progress, 0.44, 0.68));
     const descent = smoothstep(range(progress, 0.66, 0.84));
-    const surface = smoothstep(range(progress, 0.77, 0.88));
-    const exitApproach = smootherstep(range(progress, 0.85, 0.96));
-    const exitReveal = smootherstep(range(progress, 0.91, 0.997));
+    const surface = smoothstep(range(progress, 0.67, 0.76));
+    const exitApproach = smootherstep(range(progress, 0.88, 0.98));
+    const exitReveal = smootherstep(range(progress, 0.92, 0.997));
 
     root.style.setProperty("--journey-progress", progress.toFixed(4));
     root.style.setProperty("--approach", approach.toFixed(4));
@@ -49,6 +50,28 @@ export function LunarJourney({ content }: { content: HeroContent }) {
     root.style.setProperty("--surface", surface.toFixed(4));
     root.style.setProperty("--exit", exitApproach.toFixed(4));
     root.style.setProperty("--exit-reveal", exitReveal.toFixed(4));
+    root.style.setProperty("--approach-copy", exposure(progress, .2, .24, .31, .35).toFixed(4));
+    root.style.setProperty("--orbit-copy", exposure(progress, .4, .44, .61, .66).toFixed(4));
+    root.style.setProperty("--surface-copy", exposure(progress, .7, .76, .88, .92).toFixed(4));
+    // Opacity alone must not leave invisible links in the keyboard tab order.
+    const surfaceLink = root.querySelector<HTMLAnchorElement>(".voyage-copy--surface a");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const visibility: Record<string, boolean> = {
+      origin: reduced || progress < .24,
+      approach: !reduced && progress > .2 && progress < .35,
+      orbit: !reduced && progress > .4 && progress < .66,
+      surface: reduced || progress > .7 && progress < .92,
+    };
+    for (const [name, visible] of Object.entries(visibility)) {
+      const layer = root.querySelector<HTMLElement>(`.voyage-copy--${name}`);
+      if (layer) layer.inert = !visible;
+    }
+    if (surfaceLink) surfaceLink.tabIndex = reduced || (progress >= .76 && progress <= .88) ? 0 : -1;
+    const heroLink = root.querySelector<HTMLAnchorElement>(".voyage-work-link");
+    if (heroLink) heroLink.tabIndex = reduced || progress < .2 ? 0 : -1;
+    root.querySelectorAll<HTMLAnchorElement>(".voyage-header a").forEach(link => {
+      link.tabIndex = reduced || progress < .88 ? 0 : -1;
+    });
 
     const nextPhase = phaseFromProgress(progress);
     if (nextPhase !== phaseRef.current) {
@@ -65,15 +88,18 @@ export function LunarJourney({ content }: { content: HeroContent }) {
     const handleResize = () => updateJourney(window.scrollY);
     const handlePointerMove = (event: PointerEvent) => {
       const root = stageRef.current;
-      if (!root) return;
+      if (!root || window.matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches) return;
       root.style.setProperty("--pointer-x", ((event.clientX / window.innerWidth - 0.5) * 2).toFixed(3));
       root.style.setProperty("--pointer-y", ((event.clientY / window.innerHeight - 0.5) * 2).toFixed(3));
     };
 
     window.addEventListener("resize", handleResize);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    media.addEventListener("change", handleResize);
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     return () => {
       window.removeEventListener("resize", handleResize);
+      media.removeEventListener("change", handleResize);
       window.removeEventListener("pointermove", handlePointerMove);
     };
   }, [updateJourney]);
@@ -88,12 +114,6 @@ export function LunarJourney({ content }: { content: HeroContent }) {
         <div className="lunar-threshold" aria-hidden="true">
           <span className="lunar-threshold__bloom" />
           <span className="lunar-threshold__veil" />
-        </div>
-
-        <div className="warp-corridor" aria-hidden="true">
-          {Array.from({ length: 16 }, (_, index) => (
-            <i key={index} style={{ "--ray": index } as CSSProperties} />
-          ))}
         </div>
 
         <div className="orbit-field" aria-hidden="true">
@@ -122,7 +142,7 @@ export function LunarJourney({ content }: { content: HeroContent }) {
             <strong>{content.name}</strong>
           </a>
           <nav aria-label="Lunar journey chapters">
-            <a href="#story">Story</a>
+            <a href="#story">About</a>
             <a href="#work">Work</a>
             <a href="#process">Process</a>
             <a href="#contact">Contact</a>
@@ -133,6 +153,7 @@ export function LunarJourney({ content }: { content: HeroContent }) {
           <p>Web developer & creative engineer</p>
           <h1>{content.name}</h1>
           <span>{content.tagline}</span>
+          <a className="voyage-work-link" href="#work">Explore selected work <span aria-hidden="true">↗</span></a>
         </div>
 
         <div className="voyage-copy voyage-copy--approach">
@@ -159,7 +180,7 @@ export function LunarJourney({ content }: { content: HeroContent }) {
             <li><b>02</b><span><strong>Experience</strong>Interface, interaction, and accessibility</span></li>
             <li><b>03</b><span><strong>Systems</strong>Architecture, data, and production</span></li>
           </ol>
-          <a href="mailto:stronghold.kingdom.777@gmail.com">Begin a conversation <i aria-hidden="true">↗</i></a>
+          <a href="#work">See the work <i aria-hidden="true">↗</i></a>
         </div>
 
         <div className="voyage-meter" aria-hidden="true">

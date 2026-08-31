@@ -2,7 +2,7 @@
 
 import { ReactLenis, useLenis } from "lenis/react";
 import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 function AnimationBridge() {
@@ -27,15 +27,23 @@ function AnimationBridge() {
   return null;
 }
 
+const motionQuery = "(prefers-reduced-motion: reduce)";
+function subscribeMotion(callback: () => void) {
+  const media = window.matchMedia(motionQuery);
+  media.addEventListener("change", callback);
+  return () => media.removeEventListener("change", callback);
+}
+
 export function CinematicScrollProvider({ children }: { children: ReactNode }) {
+  const reduced = useSyncExternalStore(subscribeMotion, () => window.matchMedia(motionQuery).matches, () => false);
   return (
     <ReactLenis
       root
       options={{
         autoRaf: false,
-        anchors: { duration: 1.05, lock: true },
+        anchors: { duration: reduced ? 0 : .85, immediate: reduced, lock: false },
         lerp: 0.115,
-        smoothWheel: true,
+        smoothWheel: !reduced,
         syncTouch: false,
         stopInertiaOnNavigate: true,
         wheelMultiplier: 1,

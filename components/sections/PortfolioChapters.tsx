@@ -4,37 +4,10 @@ import Image from "next/image";
 import { useLenis } from "lenis/react";
 import { useCallback, useEffect, useRef } from "react";
 
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
-const ease = (value: number) => value * value * (3 - 2 * value);
-
 const projects = [
-  {
-    index: "01",
-    title: "Inventory Management System",
-    type: "Business operations platform",
-    year: "2026",
-    image: "/lunar-surface-destination.png",
-    summary: "Stock, customers, staff, and financial visibility for Pakistan’s solar market.",
-    stack: "Next.js · TypeScript · Node.js · MongoDB",
-  },
-  {
-    index: "02",
-    title: "Job Application Tracker",
-    type: "Focused workflow product",
-    year: "2026",
-    image: "/lunar-hero-bg.png",
-    summary: "A deliberate system for applications, follow-ups, status, and review.",
-    stack: "React · Node.js · MongoDB",
-  },
-  {
-    index: "03",
-    title: "Headphones Affiliate Project",
-    type: "Built, grown, and sold",
-    year: "Archive",
-    image: "/lunar-gemini-hero.png",
-    summary: "A complete commercial loop—from search intent and content to monetization and exit.",
-    stack: "WordPress · SEO · Content strategy",
-  },
+  { title: "Inventory Management System", type: "Business operations platform", year: "2026", image: "/lunar-surface-destination-1920.webp", summary: "Stock, customers, staff, and financial visibility for Pakistan’s solar market.", stack: "Next.js · TypeScript · Node.js · MongoDB", scope: ["Inventory", "Customers & staff", "Financial visibility"] },
+  { title: "Job Application Tracker", type: "Focused workflow product", year: "2026", image: "/lunar-hero-bg-1920.webp", summary: "A deliberate system for applications, follow-ups, status, and review.", stack: "React · Node.js · MongoDB", scope: ["Applications", "Follow-ups", "Status & review"] },
+  { title: "Headphones Affiliate Project", type: "Built, grown, and sold", year: "Archive", image: "/lunar-gemini-hero-1920.webp", summary: "A complete commercial loop—from search intent and content to monetization and exit.", stack: "WordPress · SEO · Content strategy", scope: ["Search intent", "Content", "Monetization"] },
 ];
 
 const practice = [
@@ -45,151 +18,111 @@ const practice = [
 
 export function PortfolioChapters() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
+  const geometry = useRef({ top: 0, distance: 1, travel: 0 });
+  const lenis = useLenis();
 
-  const updateChapters = useCallback(() => {
-    const root = rootRef.current;
-    if (!root) return;
-
-    const viewport = window.innerHeight;
-    root.querySelectorAll<HTMLElement>("[data-scroll-scene]").forEach((scene) => {
-      const rect = scene.getBoundingClientRect();
-      const distance = Math.max(scene.offsetHeight - viewport, 1);
-      const progress = ease(clamp01(-rect.top / distance));
-      scene.style.setProperty("--scene-progress", progress.toFixed(4));
-
-      if (scene.dataset.scrollScene === "process") {
-        scene.style.setProperty("--card-one", ease(clamp01(progress / .34)).toFixed(4));
-        scene.style.setProperty("--card-two", ease(clamp01((progress - .28) / .34)).toFixed(4));
-        scene.style.setProperty("--card-three", ease(clamp01((progress - .6) / .34)).toFixed(4));
-      }
+  const update = useCallback((scroll: number) => {
+    const { top, distance, travel } = geometry.current;
+    const progress = Math.min(1, Math.max(0, (scroll - top) / distance));
+    // Geometry is cached on resize; scrolling only updates transforms.
+    railRef.current?.style.setProperty("--rail-x", `${-progress * travel}px`);
+    rootRef.current?.style.setProperty("--work-progress", String(progress));
+    rootRef.current?.querySelectorAll<HTMLButtonElement>(".project-controls button").forEach((button, index) => {
+      const current = index === Math.round(progress * (projects.length - 1)) ? "true" : "false";
+      if (button.getAttribute("aria-current") !== current) button.setAttribute("aria-current", current);
     });
   }, []);
 
-  useLenis(updateChapters, [updateChapters]);
+  useLenis((instance) => update(instance.scroll), [update]);
 
   useEffect(() => {
-    updateChapters();
-    const handlePointerMove = (event: PointerEvent) => {
-      const root = rootRef.current;
-      if (!root) return;
-      root.style.setProperty("--manifesto-x", ((event.clientX / window.innerWidth - 0.5) * 2).toFixed(3));
-      root.style.setProperty("--manifesto-y", ((event.clientY / window.innerHeight - 0.5) * 2).toFixed(3));
+    const measure = () => {
+      const track = trackRef.current;
+      const rail = railRef.current;
+      if (!track || !rail) return;
+      geometry.current = {
+        top: track.getBoundingClientRect().top + window.scrollY,
+        distance: Math.max(1, track.offsetHeight - window.innerHeight),
+        travel: Math.max(0, rail.scrollWidth - track.clientWidth),
+      };
+      update(window.scrollY);
     };
-    window.addEventListener("resize", updateChapters);
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    return () => {
-      window.removeEventListener("resize", updateChapters);
-      window.removeEventListener("pointermove", handlePointerMove);
-    };
-  }, [updateChapters]);
+    const observer = new ResizeObserver(measure);
+    if (rootRef.current) observer.observe(rootRef.current);
+    if (railRef.current) observer.observe(railRef.current);
+    window.addEventListener("resize", measure);
+    const nativeScroll = () => { if (!lenis) update(window.scrollY); };
+    window.addEventListener("scroll", nativeScroll, { passive: true });
+    measure();
+    return () => { observer.disconnect(); window.removeEventListener("resize", measure); window.removeEventListener("scroll", nativeScroll); };
+  }, [update, lenis]);
+
+  const selectProject = (index: number) => {
+    const { top, distance } = geometry.current;
+    const target = top + distance * index / (projects.length - 1);
+    if (lenis) lenis.scrollTo(target, { duration: .8, lock: false });
+    else window.scrollTo({ top: target, behavior: "smooth" });
+  };
 
   return (
     <div ref={rootRef} className="portfolio-chapters">
-      <section className="lunar-manifesto" data-scroll-scene="manifesto" aria-labelledby="manifesto-title">
-        <div className="manifesto-horizon" aria-hidden="true" />
-        <div className="manifesto-sticky">
-          <header className="manifesto-folio">
-            <p className="chapter-kicker">Practice / Thesis</p>
-            <span>01 — A wider field of view</span>
-          </header>
-
-          <div className="manifesto-statement">
-            <h2 id="manifesto-title" className="manifesto-title">
-              <span>Attention before <em className="font-accent">interface.</em></span>
-              <span>Context before <em className="font-accent">code.</em></span>
-            </h2>
-            <div className="manifesto-aperture" aria-hidden="true"><i /></div>
-          </div>
-
-          <footer className="manifesto-foot">
-            <p className="manifesto-body">
-              I came to development through search, content, and small businesses. That perspective
-              still guides the work: understand why people arrive, then build what makes them stay.
-            </p>
-            <p className="manifesto-method"><span>Read the signal</span><span>Shape the journey</span><span>Build the system</span></p>
-          </footer>
-        </div>
-      </section>
-
-      <section className="origin-sequence" id="story" data-scroll-scene="story" aria-labelledby="story-title">
-        <div className="origin-ledger">
-          <div className="origin-ledger__title">
-            <p className="chapter-kicker">Origin / Proof / Practice</p>
-            <h2 id="story-title">From search<br />to <em className="font-accent">systems.</em></h2>
-          </div>
-          <ol className="origin-ledger__beats">
-            <li><b>01</b><h3>The web meets attention</h3><p>WordPress, Google SEO, and content taught me that useful work must first be readable and findable.</p></li>
-            <li><b>02</b><h3>A complete commercial loop</h3><p>I built, grew, monetized, and sold an affiliate project—learning the whole lifecycle rather than one isolated craft.</p></li>
-            <li><b>03</b><h3>Products with working depth</h3><p>Now I combine that market context with React, Next.js, Node.js, MongoDB, and production-minded systems.</p></li>
-          </ol>
-        </div>
-      </section>
-
       <section className="work-archive" id="work" aria-labelledby="work-title">
-        <div className="work-archive__head">
-          <p className="chapter-kicker">Selected coordinates</p>
-          <h2 id="work-title">Work with<br />a reason to <em className="font-accent">exist.</em></h2>
-          <p>Three projects. Different surfaces. The same concern for clarity, utility, and outcomes.</p>
-        </div>
-        <div className="project-camera-track" data-scroll-scene="work">
+        <header className="work-archive__head">
+          <p className="chapter-kicker">01 / Selected work</p>
+          <h2 id="work-title">Beyond the atmosphere.<br /><em className="font-accent">Into the work.</em></h2>
+          <p>Products, workflows, and a business built from the ground up.</p>
+        </header>
+        <div ref={trackRef} className="project-camera-track">
           <div className="project-camera">
-            <div className="project-orbit">
-              {projects.map((project) => (
-                <article className="project-card" key={project.title}>
+            <div className="project-controls" role="group" aria-label="Choose a project">
+              <span>Selected projects / 2026 & archive</span>
+              <div>{projects.map((project, index) => <button key={project.title} onClick={() => selectProject(index)} aria-label={`Show ${project.title}`}>0{index + 1}</button>)}</div>
+            </div>
+            <div ref={railRef} className="project-orbit">
+              {projects.map((project, index) => (
+                <article className="project-card" key={project.title} aria-labelledby={`project-${index}`}>
                   <div className="project-card__visual">
-                    <Image src={project.image} alt="" fill sizes="(max-width: 720px) 100vw, 72vw" />
-                    <span>{project.index}</span>
+                    <Image src={project.image} alt="" fill sizes="(max-width: 800px) 100vw, 40vw" />
+                    <span className="project-card__number">0{index + 1}</span>
+                    <span className="project-card__art-label">Lunar artwork / project cover</span>
                   </div>
-                  <div className="project-card__meta"><span>{project.type}</span><span>{project.year}</span></div>
-                  <h3>{project.title}</h3>
-                  <p>{project.summary}</p>
-                  <small>{project.stack}</small>
+                  <div className="project-card__content">
+                    <div className="project-card__meta"><span>{project.type}</span><span>{project.year}</span></div>
+                    <h3 id={`project-${index}`}>{project.title}</h3>
+                    <p>{project.summary}</p>
+                    <ul className="project-scope">{project.scope.map(item => <li key={item}>{item}</li>)}</ul>
+                    <small>{project.stack}</small>
+                    <a className="text-link" href={`mailto:stronghold.kingdom.777@gmail.com?subject=${encodeURIComponent(`Tell me about ${project.title}`)}`} onFocus={() => { if (window.matchMedia("(min-width: 801px) and (prefers-reduced-motion: no-preference)").matches) selectProject(index); }}>Discuss this project <span aria-hidden="true">↗</span></a>
+                  </div>
                 </article>
               ))}
             </div>
+            <div className="project-progress" aria-hidden="true"><i /></div>
           </div>
         </div>
       </section>
 
-      <section className="practice-sequence" id="process" data-scroll-scene="process" aria-labelledby="process-title">
-        <div className="practice-field">
-          <div className="practice-field__intro">
-            <p className="chapter-kicker">How I work</p>
-            <h2 id="process-title">From a loose idea to a <em className="font-accent">dependable release.</em></h2>
-            <p>Atmosphere matters. So do maintainability, loading time, accessibility, and the unglamorous details that make a product hold together.</p>
-          </div>
-          <div className="practice-cards">
-            {practice.map(([index, title, body]) => (
-              <article key={index}>
-                <b>{index}</b><h3>{title}</h3><p>{body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
+      <section className="about-note" id="story" aria-labelledby="story-title">
+        <p className="chapter-kicker">02 / A little context</p>
+        <h2 id="story-title">A marketer’s eye.<br /><em className="font-accent">A developer’s discipline.</em></h2>
+        <div><p>I came to development through search, content, and small businesses. I built, grew, monetized, and sold an affiliate project—learning the whole lifecycle.</p><p>That perspective still guides the work: understand why people arrive, then build what makes them stay.</p></div>
       </section>
 
-      <section className="capability-sequence" data-scroll-scene="capabilities" aria-labelledby="capability-title">
-        <div className="capability-orbits">
-          <div className="capability-orbits__line capability-orbits__line--top" aria-hidden="true" />
-          <p className="chapter-kicker">The working constellation</p>
-          <h2 id="capability-title">Strategy · <em className="font-accent">Interface</em> · Engineering</h2>
-          <p>React / Next.js / TypeScript / Node.js / MongoDB / WordPress / SEO / Content</p>
-          <div className="capability-orbits__line capability-orbits__line--bottom" aria-hidden="true" />
+      <section className="practice-sequence" id="process" aria-labelledby="process-title">
+        <div className="practice-field__intro">
+          <p className="chapter-kicker">03 / How I work</p>
+          <h2 id="process-title">Intention in.<br /><em className="font-accent">Useful work out.</em></h2>
         </div>
+        <div className="practice-cards">{practice.map(([index, title, body]) => <article key={index}><b>{index}</b><h3>{title}</h3><p>{body}</p></article>)}</div>
+        <p className="practice-tools">React / Next.js / TypeScript / Node.js / MongoDB / WordPress / SEO</p>
       </section>
 
       <footer className="lunar-footer" id="contact">
-        <div className="lunar-footer__top">
-          <p className="chapter-kicker">A new orbit starts here</p>
-          <a href="mailto:stronghold.kingdom.777@gmail.com">Let’s build something worth <em className="font-accent">remembering</em> <span aria-hidden="true">↗</span></a>
-        </div>
-        <div className="lunar-footer__links">
-          <a href="https://github.com/espresso-gg" target="_blank" rel="noreferrer">GitHub ↗</a>
-          <a href="mailto:stronghold.kingdom.777@gmail.com">Email ↗</a>
-          <span>Pakistan / Available worldwide</span>
-        </div>
-        <p className="lunar-footer__name">Uzair Khurshid</p>
-        <small>© {new Date().getFullYear()} Uzair Khurshid</small>
+        <div className="lunar-footer__top"><p className="chapter-kicker">04 / Your next chapter</p><a href="mailto:stronghold.kingdom.777@gmail.com">Let’s build something worth <em className="font-accent">remembering.</em> <span aria-hidden="true">↗</span></a></div>
+        <div className="lunar-footer__links"><a href="https://github.com/espresso-gg" target="_blank" rel="noreferrer">GitHub ↗</a><a href="mailto:stronghold.kingdom.777@gmail.com">Email ↗</a><span>Pakistan / Available worldwide</span><a href="#origin">Back to the moon ↑</a></div>
+        <p className="lunar-footer__name">Uzair Khurshid</p><small>© {new Date().getFullYear()} Uzair Khurshid</small>
       </footer>
     </div>
   );

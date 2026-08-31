@@ -4,6 +4,7 @@ import type { Viewport } from "next";
 import { CinematicScrollProvider } from "@/components/motion/CinematicScrollProvider";
 import { siteConfig } from "@/lib/constants";
 import "@fontsource/cormorant-garamond/400.css";
+import "@fontsource/cinzel/400.css";
 import "@fontsource/cormorant-garamond/500.css";
 import "@fontsource/instrument-serif/400.css";
 import "@fontsource/instrument-serif/400-italic.css";
