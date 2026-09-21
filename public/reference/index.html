@@ -75,7 +75,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- LCP: the hero shader is the largest first-paint image — fetch it ahead of the
        144-image queue instead of letting it queue behind everything else -->
-  <link rel="preload" as="image" href="/assets/hero-shader.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="/hero/scene-desktop.webp" type="image/webp" fetchpriority="high">
   <!-- all font families in ONE stylesheet request — this was 4 separate render-blocking
        stylesheets (with Lato requested twice); one URL = one round-trip before first paint.
        Playfair Display (variable) = Hatcha case-study serif; Darker Grotesque + Bitter
@@ -672,17 +672,33 @@
       height: 100%;
       overflow: visible;
     }
-    /* dotted trail stroke tracks the theme (overrides the SVG's stroke attr) */
-    #planeTrailPath { stroke: var(--trail-stroke); }
+    /* Keep the SVG path as invisible geometry; moon blossoms draw the trail. */
+    #planeTrailPath { stroke: transparent; }
     .plane-sprite {
       position: absolute;
       top: 0;
       left: 0;
-      width: 88px;
+      width: 92px;
       height: auto;
       transform-origin: center center;
       transform: translate(-50%, -50%);
       will-change: transform, opacity;
+      filter: drop-shadow(0 0 8px rgba(157, 210, 255, 0.72));
+    }
+    .plane-blossoms {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .plane-blossom {
+      position: absolute;
+      width: var(--blossom-size, 20px);
+      height: var(--blossom-size, 20px);
+      object-fit: contain;
+      transform: translate(-50%, -50%) rotate(var(--blossom-rotation, 0deg));
+      opacity: 0;
+      will-change: opacity;
+      filter: drop-shadow(0 0 6px rgba(125, 190, 255, 0.68));
     }
 
     .featured-heading {
@@ -858,39 +874,43 @@
       top: 0;
       z-index: 11;
       height: max(1010px, 100vh);  /* ≥ viewport so the pinned section fully covers */
-      /* willow-forest painting (Figma node 128:3851) as the section background.
-         Uses a MIRRORED tile (painting + its horizontal flip) so it can repeat across
-         the full width with no visible seams — the mirror edges line up, so it reads as
-         one continuous forest, never as tiles. Sized `auto 100%` so the full painting
-         height (cream sky → willows → meadow) maps to the section height: the cream sky
-         lands at the top edge and the lush willows fill the body. The painting itself
-         now lives on the .t-willow layer below so it can sway in the breeze; this rule
-         just holds the sky-cream base colour behind it. */
-      background: var(--surface-raised);
+      /* Deep base beneath the generated lunar painting. */
+      background: #0b1230;
       /* clip horizontal land bleed, but let the wavy grass overflow the top —
          it sits at top:-196 and a plain overflow:hidden cropped the whole wave */
       overflow-x: clip;
       overflow-y: visible;
     }
 
-    /* willow-painting layer — carries the mirrored-tile background so it can be
-       transformed independently of the section (cards/heading stay still). Two nested
-       skins sway on slightly different clocks; anchored at the bottom (transform-origin
-       50% 100%) so the roots stay planted and the canopy leans, like a breeze moving
-       through the fronds. Compound motion (two out-of-sync periods) keeps it organic
-       rather than metronomic. Only transform is animated → stays on the compositor. */
+    /* Lunar-painting layer. It drifts independently while cards and type stay still. */
     .t-willow {
+      --t-crest-h: min(13.72vw, 198px);
       position: absolute;
-      inset: 0;
+      top: calc(4px - var(--t-crest-h));
+      right: 0;
+      bottom: 0;
+      left: 0;
       z-index: 0;
       overflow: hidden;
       pointer-events: none;
+      /* Use the original crest alpha as the top of this SAME artwork layer, then
+         union it with a solid mask below. The image now continues through the wave
+         instead of meeting a separately painted navy strip. */
+      -webkit-mask-image: url("/assets/testimonials-grass-cream.png"), linear-gradient(#000 0 0);
+      -webkit-mask-size: 100% var(--t-crest-h), 100% calc(100% - var(--t-crest-h) + 1px);
+      -webkit-mask-position: top center, bottom center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-composite: source-over;
+      mask-image: url("/assets/testimonials-grass-cream.png"), linear-gradient(#000 0 0);
+      mask-size: 100% var(--t-crest-h), 100% calc(100% - var(--t-crest-h) + 1px);
+      mask-position: top center, bottom center;
+      mask-repeat: no-repeat;
+      mask-composite: add;
     }
     .t-willow-sway,
     .t-willow-skin {
       position: absolute;
-      /* horizontal overscan so the sway never exposes the cream base at the edges;
-         no vertical overscan → the cream sky stays pinned to the top edge */
+      /* overscan prevents the slow drift from exposing the base at the edges */
       inset: 0 -7%;
       transform-origin: 50% 100%;
       will-change: transform;
@@ -898,26 +918,29 @@
     }
     .t-willow-skin {
       inset: 0;
-      background: url("/assets/testimonials-willow-tile.jpg") top center / auto 100% repeat-x;
-      animation: willow-breeze 7.5s ease-in-out infinite alternate;
+      background: url("/hero/testimonials-lunar-desktop.webp") center / cover no-repeat;
+      animation: lunar-breathe 10s ease-in-out infinite alternate;
     }
     .t-willow-sway {
-      animation: willow-drift 12.5s ease-in-out infinite alternate;
+      animation: lunar-drift 15s ease-in-out infinite alternate;
     }
-    /* Both skins lean the SAME direction on different clocks so their skews REINFORCE
-       (an earlier version had them in opposite phase, which cancelled to near-zero and
-       looked static). The 6.5s / 11s beat keeps the sway from feeling metronomic. */
-    @keyframes willow-breeze {
-      from { transform: skewX(-1deg)   translateX(-0.45%) scaleX(1.007); }
-      to   { transform: skewX(1.15deg) translateX(0.45%)  scaleX(1); }
+    @keyframes lunar-breathe {
+      from { transform: translate3d(-0.35%, 0, 0) scale(1.012); }
+      to   { transform: translate3d(0.35%, -0.25%, 0) scale(1.022); }
     }
-    @keyframes willow-drift {
-      from { transform: skewX(-0.4deg) translateX(-0.2%); }
-      to   { transform: skewX(0.45deg) translateX(0.2%); }
+    @keyframes lunar-drift {
+      from { transform: translateX(-0.15%); }
+      to   { transform: translateX(0.15%); }
     }
     @media (prefers-reduced-motion: reduce) {
       .t-willow-sway,
       .t-willow-skin { animation: none; }
+    }
+    @media (max-width: 1100px) {
+      .t-willow-skin {
+        background-image: url("/hero/testimonials-lunar-mobile.webp");
+        background-position: center;
+      }
     }
 
     /* (the node 128:4830 noise overlay was removed — it shipped disabled and only
@@ -963,6 +986,7 @@
     /* land / meadow — exported group 128:3997. Lowered so the meadow reads as a
        slimmer strip beneath the centred card deck (bleeds off the bottom). */
     .t-land {
+      display: none;
       position: absolute;
       bottom: -96px;
       left: 0;
@@ -1682,28 +1706,11 @@
     body.night .client-logo.logo-vibes    { content: url("/assets/logo-vibes-night.png"); }
     /* marquee edge-fades track --bg-base; plane trail tracks --trail-stroke — no night rule needed */
 
-    /* — testimonials night art: purple willow watercolour on the
-       willow layer (seamless horizontal mirror-tile, same repeat-x/sway as day) and the
-       purple night meadow on the land layer; green day crest hidden for the dark one — */
-    /* section bg + eyebrow/heading text flip via tokens; only art swaps stay here */
-    body.night .t-willow-skin { background-image: url("/assets/testimonials-willow-night-tile.png"); }
-    /* night meadow art has a thin transparent left column + tapered bottom corners;
-       bleed it a few % past both edges (section clips overflow-x) so opaque meadow
-       reaches edge-to-edge, matching the day land strip */
-    body.night .t-land { content: url("/assets/land meadow-night.png"); width: 106%; left: -3%; }
-    body.night .t-wavy { visibility: hidden; }
+    /* The lunar testimonial art is intentionally nocturnal in both site modes. */
+    .t-wavy { visibility: hidden; }
     .t-wavy-night {
       display: none;
-      background: var(--surface-raised);   /* night-only crest; token resolves to navy */
-      -webkit-mask-image: url("/assets/testimonials-grass-cream.png");
-      -webkit-mask-size: 100% 100%;
-      mask-image: url("/assets/testimonials-grass-cream.png");
-      mask-size: 100% 100%;
-      /* .t-wavy gives position/top/width; height:auto has no box on a div, so match the img ratio */
-      aspect-ratio: 2880 / 395;
-      height: auto;
     }
-    body.night .t-wavy-night { display: block; visibility: visible; }
 
     /* — footer (256:2317): bg, crest fill and head/sub text all flip via tokens
        (--surface-raised, --text-heading); only the meadow art swap stays here — */
@@ -2818,12 +2825,80 @@
       .pgf-card { transition: opacity .3s ease, filter .3s ease; }
       .pgf-lightbox, .pgf-caption > * { transition: opacity .3s ease; }
     }
+
+    /* Lunar hero art — a single Higgsfield master, exported responsively below.
+       The original type, recorder and scroll choreography stay untouched while
+       the sky layers are replaced by a quieter Nod-Krai-inspired composition. */
+    .hero-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: opacity 0.55s ease, filter 0.55s ease;
+      pointer-events: none;
+    }
+
+    .testimonials .t-eyebrow,
+    .testimonials .t-heading {
+      color: #f4f0e6;
+      text-shadow: 0 2px 18px rgba(7, 10, 30, 0.72);
+    }
+    .hero-art-morning {
+      filter: saturate(0.92) brightness(1.02) contrast(1.01);
+    }
+    .hero-art-night {
+      opacity: 0;
+      object-position: 58% 54%;
+      filter: saturate(1.02) brightness(0.7) contrast(1.1);
+    }
+    .hero-lunar-scrim {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(7, 24, 59, 0.5) 0%, rgba(10, 39, 79, 0.2) 46%, rgba(4, 21, 52, 0.03) 78%),
+        linear-gradient(0deg, rgba(3, 15, 40, 0.14), transparent 46%);
+      pointer-events: none;
+    }
+    .hero .hero-sky,
+    .hero .hero-stars,
+    .hero .hero-meteor,
+    .hero .sun-group,
+    .hero .moon-group,
+    .hero .hero-cloud { display: none !important; }
+    body.night .hero-art-morning { opacity: 0; }
+    body.night .hero-art-night { opacity: 1; }
+    body.night .hero-lunar-scrim {
+      background:
+        linear-gradient(90deg, rgba(1, 8, 29, 0.64) 0%, rgba(4, 14, 42, 0.26) 52%, rgba(1, 6, 22, 0.18) 100%),
+        linear-gradient(0deg, rgba(1, 7, 24, 0.34), transparent 48%);
+    }
+    @media (max-width: 640px) {
+      .hero-art-morning { object-position: 62% center; }
+      /* Bias farther into the right-hand artwork so the full crescent, including
+         its upper tip, remains inside narrow portrait viewports. */
+      .hero-art-night { object-position: 78% center; }
+      .hero-lunar-scrim {
+        background:
+          linear-gradient(90deg, rgba(5, 18, 48, 0.52) 0%, rgba(7, 25, 58, 0.14) 84%),
+          linear-gradient(0deg, rgba(3, 12, 35, 0.18), transparent 55%);
+      }
+    }
   </style>
 </head>
 
 <body>
   <!-- apply saved theme before first paint (avoids day→night flash) -->
-  <script>if (localStorage.getItem('theme') === 'night') document.body.classList.add('night');</script>
+  <script>
+    /* The Nod-Krai art direction launches in night mode once, then respects the
+       visitor's day/night choice on following loads. */
+    if (localStorage.getItem('theme-version') !== 'nod-krai-1') {
+      localStorage.setItem('theme', 'night');
+      localStorage.setItem('theme-version', 'nod-krai-1');
+    }
+    if (localStorage.getItem('theme') === 'night') document.body.classList.add('night');
+  </script>
 
   <!-- ════ LOADING SCREEN (Figma node 572:1811) — Pac-Man chomping 4 dots.
        In the markup so it paints on first frame (no FOUC); controller lives in
@@ -2854,12 +2929,20 @@
 
   <!-- ════ HERO (node 1:27) ════ -->
   <section class="hero">
-    <img class="hero-shader" src="/assets/hero-shader.webp" fetchpriority="high" alt="" aria-hidden="true">
+    <picture>
+      <source media="(max-width: 640px)" srcset="/hero/scene-morning-mobile.webp">
+      <img class="hero-art hero-art-morning" src="/hero/scene-morning-desktop.webp" alt="" aria-hidden="true">
+    </picture>
+    <picture>
+      <source media="(max-width: 640px)" srcset="/hero/scene-mobile.webp">
+      <img class="hero-art hero-art-night" src="/hero/scene-desktop.webp" fetchpriority="high" alt="" aria-hidden="true">
+    </picture>
     <div class="hero-sky" aria-hidden="true"></div>
     <div class="hero-stars" aria-hidden="true"></div>
     <!-- no z-index: DOM order alone keeps the meteor above the starfield and
          below .hero-noise and .hero-content -->
     <div class="hero-meteor" aria-hidden="true"></div>
+    <div class="hero-lunar-scrim" aria-hidden="true"></div>
     <div class="hero-noise" aria-hidden="true"></div>
 
     <div class="hero-content" id="hero-content">
@@ -2949,7 +3032,7 @@
   <!-- ════ FEATURED WORK (node 1:117) ════ -->
   <section class="featured-work" id="work">
 
-    <!-- scroll-driven paper plane + dotted trail (decorative).
+    <!-- scroll-driven lunar spirit + moon-blossom trail (decorative).
          Path is routed only through empty zones — never over text/logos/tiles. -->
     <div class="plane-fly" aria-hidden="true">
       <svg class="plane-trail" viewBox="0 0 1440 3021" fill="none" preserveAspectRatio="none">
@@ -2967,7 +3050,8 @@
           stroke-linecap="butt" stroke-dasharray="10 6" mask="url(#planeTrailMask)"
           d="M 210 110 C 110 200 70 325 88 410 C 103 488 192 528 255 555"/>
       </svg>
-      <img class="plane-sprite" src="/assets/plane.svg" alt="">
+      <div class="plane-blossoms" aria-hidden="true"></div>
+      <img class="plane-sprite" src="/hero/lunar-spirit.webp" alt="">
     </div>
 
     <h2 class="featured-heading reveal">Work featured on</h2>
@@ -11068,14 +11152,15 @@
       const blurb = document.querySelector('.intro-copy');
       const fly = document.querySelector('.plane-fly');
       const sprite = document.querySelector('.plane-sprite');
+      const blossomLayer = document.querySelector('.plane-blossoms');
       const trail = document.getElementById('planeTrailPath');
       const maskPath = document.getElementById('planeTrailMaskPath');
       const motion = document.getElementById('planeMotionPath');
-      if (!section || !sky || !blurb || !fly || !sprite || !trail || !maskPath || !motion) return;
+      if (!section || !sky || !blurb || !fly || !sprite || !blossomLayer || !trail || !maskPath || !motion) return;
 
       // The sprite's nose points ~31° (down-right) when un-rotated; subtract that
       // so the nose always aligns with the path's travel direction.
-      const PLANE_OFFSET = -31;
+      const PLANE_OFFSET = 0;
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       // Opening arc as a FIXED-SIZE shape (px), pinned by its end point to a spot
@@ -11139,7 +11224,7 @@
       let curW = 1440, curH = 3021, pathTopY = 0, pathBotY = 0;
       // each drawn segment carries its motion-space [mStart,mEnd] and
       // visible-space [vStart,vEnd]; bridges fill the gaps between them
-      let SEGS = [], motionLen = 0, visLen = 0;
+      let SEGS = [], BLOSSOMS = [], motionLen = 0, visLen = 0;
 
       function setupGeometry() {
         const f = section.getBoundingClientRect();
@@ -11210,6 +11295,33 @@
         maskPath.style.strokeDasharray = motionLen;
         SEGS = segs;
 
+        // Moon blossoms replace the old dotted line across the three VISIBLE subpaths. Their
+        // stored motion-distance lets the scroll playhead reveal and retract
+        // them in perfect sync with the spirit and dashed stroke.
+        blossomLayer.replaceChildren();
+        BLOSSOMS = [];
+        let blossomIndex = 0;
+        for (const sg of segs) {
+          const segLen = sg.mEnd - sg.mStart;
+          const count = Math.max(1, Math.floor(segLen / 74));
+          for (let i = 0; i < count; i++) {
+            const t = (i + 0.5) / count;
+            const markerDistance = sg.mStart + segLen * t;
+            const point = motion.getPointAtLength(markerDistance);
+            const marker = document.createElement('img');
+            marker.className = 'plane-blossom';
+            marker.src = '/hero/moon-blossom.webp';
+            marker.alt = '';
+            marker.style.left = point.x.toFixed(1) + 'px';
+            marker.style.top = point.y.toFixed(1) + 'px';
+            marker.style.setProperty('--blossom-size', (42 + (blossomIndex % 3) * 6) + 'px');
+            marker.style.setProperty('--blossom-rotation', ((blossomIndex * 47) % 120 - 60) + 'deg');
+            blossomLayer.appendChild(marker);
+            BLOSSOMS.push({ el: marker, distance: markerDistance, opacity: -1 });
+            blossomIndex++;
+          }
+        }
+
         const bb = motion.getBBox();
         pathTopY = bb.y; pathBotY = bb.y + bb.height;
 
@@ -11253,6 +11365,16 @@
         if (md === lastMd && appearNow === lastAppear) return;
         const mdChanged = md !== lastMd;
         lastAppear = appearNow;
+        // The blossom stamps are scroll-scrubbed too: they bloom shortly after
+        // the spirit passes and disappear in reverse when the user scrolls up.
+        for (const blossom of BLOSSOMS) {
+          const reveal = reduce ? 1 : Math.max(0, Math.min(1, (md - blossom.distance + 34) / 52));
+          const nextOpacity = Number((reveal * appearNow * 0.88).toFixed(3));
+          if (nextOpacity !== blossom.opacity) {
+            blossom.el.style.opacity = nextOpacity;
+            blossom.opacity = nextOpacity;
+          }
+        }
         // While the plane is PARKED (md unchanged) only the fade is moving — reuse
         // the cached fade/position and skip the three getPointAtLength() samples,
         // which are the most expensive JS on the page and used to run for the
