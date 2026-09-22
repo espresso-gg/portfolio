@@ -1,0 +1,36 @@
+{
+  "url": "https://solcreatix.com/",
+  "above_fold": {
+    "h1_visible": true,
+    "cta_visible": true,
+    "hero_image": "https://solcreatix.com/wp-content/uploads/2026/07/workers-installing-solar-panel-on-metal-roof-2026-03-09-02-58-10-utc-scaled.webp"
+  },
+  "mobile": {
+    "viewport_meta": true,
+    "horizontal_scroll": false,
+    "touch_targets_ok": true,
+    "undersized_touch_targets": []
+  },
+  "layout": {
+    "overlapping_elements": [],
+    "text_overflow": [
+      {
+        "tag": "h1",
+        "text": "POWER ENGINEERED FOR BACKUP FREEDOM.",
+        "overflow_x": false,
+        "overflow_y": true
+      },
+      {
+        "tag": "span",
+        "text": "POWER",
+        "overflow_x": false,
+        "overflow_y": true
+      }
+    ]
+  },
+  "fonts": {
+    "base_size": 16,
+    "readable": true
+  },
+  "error": null
+}

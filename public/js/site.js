@@ -94,18 +94,36 @@ const MENU_HTML = `
 `;
 
 const FOOTER_HTML = `
-  <footer class="footer" id="contact">
+  <footer class="footer ft-nodkrai" id="contact">
     <!-- crest is a masked block (see .ft-wavy in site.css) — NOT an inline stretched
          SVG, which iOS Safari flattens to a straight line during the pinned scroll -->
     <div class="ft-wavy" aria-hidden="true"></div>
-    <!-- the land bleeds wider than the footer; clip it in its OWN wrapper so the footer
-         itself can keep overflow:visible (needed so the crest poke isn't cut on iOS) -->
-    <div class="ft-land-clip" aria-hidden="true"><img class="ft-land" src="/assets/footer-land.png" alt=""></div>
-    <div class="ft-garden" aria-hidden="true"></div>
+
+    <div class="ft-nodkrai-scene" aria-hidden="true">
+      <div class="ft-stars"></div>
+      <div class="ft-horizon-glow"></div>
+      <div class="ft-crescent"></div>
+      <div class="ft-lake"><i></i></div>
+      <div class="ft-lumen-field"></div>
+      <div class="ft-kuhenkki-arrival">
+        <div class="ft-kuhenkki-trail"></div>
+        <img class="ft-kuhenkki" src="/hero/lunar-spirit.webp" alt="">
+        <div class="ft-impact">
+          <i class="ft-droplet"></i>
+          <i class="ft-impact-core"></i>
+          <i class="ft-ripple ft-ripple-a"></i>
+          <i class="ft-ripple ft-ripple-b"></i>
+          <i class="ft-impact-spark ft-spark-a"></i>
+          <i class="ft-impact-spark ft-spark-b"></i>
+          <i class="ft-impact-spark ft-spark-c"></i>
+        </div>
+      </div>
+    </div>
 
     <div class="ft-inner">
       <p class="ft-sub reveal">Every experience begins with a mood, but earns its place through clarity. Atmosphere draws you closer; thoughtful structure gives you a reason to stay.</p>
-      <h2 class="ft-head"><button class="ft-head-btn" type="button" data-contact-open>Shall we make something unforgettable?</button></h2>
+      <h2 class="ft-head">Shall we make something unforgettable?</h2>
+      <button class="ft-lake-cta" type="button" data-contact-open>Work with me <span>↗</span></button>
     </div>
 
     <p class="ft-credit">Designed by Uzair Khurshid · Islamabad, Pakistan @2026</p>
@@ -900,6 +918,148 @@ function initGarden() {
       });
 }
 
+function initKuhenkkiLanding() {
+  const footer = document.querySelector('.footer.ft-nodkrai');
+  const field = footer && footer.querySelector('.ft-lumen-field');
+  const arrival = footer && footer.querySelector('.ft-kuhenkki-arrival');
+  const spirit = footer && footer.querySelector('.ft-kuhenkki');
+  const trail = footer && footer.querySelector('.ft-kuhenkki-trail');
+  if (!footer || !field || !arrival || !spirit || !trail || footer.dataset.kuhenkkiWired) return;
+  footer.dataset.kuhenkkiWired = '1';
+
+  // A deterministic field keeps the composition stable between visits while still
+  // feeling organic. Reusing the moon-blossom made for the page also makes this
+  // final habitat feel like the destination of the trail rather than a new motif.
+  let seed = 0x4e4f44;
+  const rand = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
+  const flowerCount = innerWidth < 641 ? 18 : 26;
+  const flowerFrag = document.createDocumentFragment();
+  for (let i = 0; i < flowerCount; i++) {
+    const bloom = document.createElement('i');
+    const depth = rand();
+    bloom.className = 'ft-lumen-bloom';
+    bloom.style.setProperty('--flower-x', (rand() * 104 - 2).toFixed(2) + '%');
+    bloom.style.setProperty('--flower-y', (8 + depth * depth * 74).toFixed(1) + 'px');
+    bloom.style.setProperty('--flower-size', (8 + depth * 14 + rand() * 5).toFixed(1) + 'px');
+    bloom.style.setProperty('--flower-lean', (rand() * 28 - 14).toFixed(1) + 'deg');
+    bloom.style.setProperty('--flower-alpha', (0.42 + depth * 0.5).toFixed(2));
+    flowerFrag.appendChild(bloom);
+  }
+  field.appendChild(flowerFrag);
+
+  const flightBlooms = [];
+  for (let i = 0; i < 9; i++) {
+    const bloom = document.createElement('i');
+    bloom.className = 'ft-flight-bloom';
+    bloom.style.setProperty('--flight-size', (16 + (i % 4) * 5) + 'px');
+    bloom.style.setProperty('--flight-rot', ((i * 41) % 110 - 55) + 'deg');
+    trail.appendChild(bloom);
+    flightBlooms.push({ el: bloom, t: (i + 1) / 11, opacity: -1 });
+  }
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp01 = n => Math.max(0, Math.min(1, n));
+  const ease = t => { t = clamp01(t); return t * t * (3 - 2 * t); };
+  const cubic = (a, b, c, d, t) => {
+    const m = 1 - t;
+    return m * m * m * a + 3 * m * m * t * b + 3 * m * t * t * c + t * t * t * d;
+  };
+  const tangent = (a, b, c, d, t) => {
+    const m = 1 - t;
+    return 3 * m * m * (b - a) + 6 * m * t * (c - b) + 3 * t * t * (d - c);
+  };
+
+  let lastP = -1;
+  let lastW = 0;
+  let lastH = 0;
+  let geometry = null;
+  let impactArmed = true;
+  let impactTimer = 0;
+
+  function setGeometry(w, h) {
+    geometry = {
+      x0: w * 0.1, y0: -h * 0.07,
+      x1: w * 0.15, y1: h * 0.25,
+      x2: w * 0.78, y2: h * 0.2,
+      x3: w * 0.64, y3: h * 0.64,
+    };
+    const g = geometry;
+    footer.style.setProperty('--landing-x', g.x3.toFixed(1) + 'px');
+    footer.style.setProperty('--landing-y', g.y3.toFixed(1) + 'px');
+    flightBlooms.forEach((bloom) => {
+      bloom.el.style.left = cubic(g.x0, g.x1, g.x2, g.x3, bloom.t).toFixed(1) + 'px';
+      bloom.el.style.top = cubic(g.y0, g.y1, g.y2, g.y3, bloom.t).toFixed(1) + 'px';
+    });
+    lastW = w;
+    lastH = h;
+  }
+
+  function triggerImpact() {
+    if (!impactArmed || reduce) return;
+    impactArmed = false;
+    clearTimeout(impactTimer);
+    arrival.classList.remove('is-impacting', 'impact-settled');
+    // Reflow happens only once at impact, never inside the normal scroll path.
+    void arrival.offsetWidth;
+    arrival.classList.add('is-impacting');
+    impactTimer = setTimeout(() => {
+      arrival.classList.remove('is-impacting');
+      arrival.classList.add('impact-settled');
+    }, 1350);
+  }
+
+  function update() {
+    const r = Scroll.rect(footer);
+    const vh = Scroll.vh();
+    const w = r.width;
+    const h = r.height;
+    if (!geometry || Math.abs(w - lastW) > 0.5 || Math.abs(h - lastH) > 0.5) setGeometry(w, h);
+    let p = clamp01((vh * 0.96 - r.top) / (h * 0.9));
+    if (reduce) {
+      p = 1;
+      spirit.style.opacity = '0';
+      arrival.classList.add('impact-settled');
+    }
+    if (Math.abs(p - lastP) < 0.001) return;
+    lastP = p;
+
+    const g = geometry;
+    const travel = ease(clamp01(p / 0.84));
+    const x = cubic(g.x0, g.x1, g.x2, g.x3, travel);
+    const y = cubic(g.y0, g.y1, g.y2, g.y3, travel);
+    const dx = tangent(g.x0, g.x1, g.x2, g.x3, travel);
+    const dy = tangent(g.y0, g.y1, g.y2, g.y3, travel);
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    const dive = ease((p - 0.7) / 0.18);
+    const spiritScale = 1 - dive * 0.7;
+    const spiritAlpha = reduce ? 0 : 1 - ease((p - 0.77) / 0.09);
+
+    spirit.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) translate(-50%,-50%) rotate(${angle.toFixed(1)}deg) scale(${spiritScale.toFixed(3)})`;
+    spirit.style.opacity = spiritAlpha.toFixed(3);
+
+    flightBlooms.forEach((bloom) => {
+      const reveal = ease((travel - bloom.t + 0.055) / 0.09);
+      const dissolve = 1 - ease((travel - bloom.t - 0.22) / 0.26) * 0.55;
+      const nextOpacity = Number((reveal * dissolve * (1 - dive * 0.35)).toFixed(2));
+      if (nextOpacity !== bloom.opacity) {
+        bloom.el.style.opacity = nextOpacity;
+        bloom.opacity = nextOpacity;
+      }
+    });
+
+    if (p >= 0.8) triggerImpact();
+    else if (p < 0.66 && !impactArmed) {
+      clearTimeout(impactTimer);
+      impactArmed = true;
+      arrival.classList.remove('is-impacting', 'impact-settled');
+    }
+  }
+
+  Scroll.add(update);
+  addEventListener('resize', () => { lastP = -1; Scroll.kick(); }, { passive: true });
+  update();
+}
+
 function initReveal(root) {
   const els = root.querySelectorAll('.reveal');
   if (!els.length) return;
@@ -1045,7 +1205,7 @@ class SiteFooter extends HTMLElement {
   connectedCallback() {
     this.innerHTML = FOOTER_HTML;
     initFooterGrow();
-    initGarden();
+    initKuhenkkiLanding();
     initReveal(this);
   }
 }

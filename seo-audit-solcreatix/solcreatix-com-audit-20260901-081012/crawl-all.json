@@ -1,0 +1,160 @@
+{
+  "pages": [
+    {
+      "url": "https://solcreatix.com/",
+      "status": 200,
+      "title_length": 17,
+      "meta_description_length": 149
+    },
+    {
+      "url": "https://solcreatix.com/",
+      "status": 200,
+      "title_length": 17,
+      "meta_description_length": 149
+    },
+    {
+      "url": "https://solcreatix.com/products/",
+      "status": 200,
+      "title_length": 21,
+      "meta_description_length": 21
+    },
+    {
+      "url": "https://solcreatix.com/solar-energy-load-estimator/",
+      "status": 200,
+      "title_length": 40,
+      "meta_description_length": 142
+    },
+    {
+      "url": "https://solcreatix.com/request-quote/",
+      "status": 200,
+      "title_length": 26,
+      "meta_description_length": 23
+    },
+    {
+      "url": "https://solcreatix.com/contact/",
+      "status": 200,
+      "title_length": 20,
+      "meta_description_length": 145
+    },
+    {
+      "url": "https://solcreatix.com/about-us/",
+      "status": 200,
+      "title_length": 21,
+      "meta_description_length": 49
+    },
+    {
+      "url": "https://solcreatix.com/products/tesla-vm-iii-prime-4kw/",
+      "status": 200,
+      "title_length": 35,
+      "meta_description_length": 12
+    },
+    {
+      "url": "https://solcreatix.com/products/tesla-vm-iii-prime-6kw/",
+      "status": 200,
+      "title_length": 35,
+      "meta_description_length": 12
+    },
+    {
+      "url": "https://solcreatix.com/products/tesla-hsc-aip-12/",
+      "status": 200,
+      "title_length": 29,
+      "meta_description_length": 12
+    },
+    {
+      "url": "https://solcreatix.com/products/tesla-hsc-aip-10/",
+      "status": 200,
+      "title_length": 29,
+      "meta_description_length": 12
+    },
+    {
+      "url": "https://solcreatix.com/products/tesla-hsc-aip-8/",
+      "status": 200,
+      "title_length": 28,
+      "meta_description_length": 12
+    },
+    {
+      "url": "https://solcreatix.com/products/tesla-hsc-aip-6/",
+      "status": 200,
+      "title_length": 28,
+      "meta_description_length": 12
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-15002/",
+      "status": 200,
+      "title_length": 31,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-13002/",
+      "status": 200,
+      "title_length": 31,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-12002/",
+      "status": 200,
+      "title_length": 31,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-11008/",
+      "status": 200,
+      "title_length": 31,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-9055/",
+      "status": 200,
+      "title_length": 30,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-9000/",
+      "status": 200,
+      "title_length": 30,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-6500/",
+      "status": 200,
+      "title_length": 30,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-eco-6600/",
+      "status": 200,
+      "title_length": 34,
+      "meta_description_length": 28
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-krypton-eco-5000/",
+      "status": 200,
+      "title_length": 34,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-powebase-16/",
+      "status": 200,
+      "title_length": 29,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-powerwall-4-15/",
+      "status": 200,
+      "title_length": 32,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-powerwall-3-0/",
+      "status": 200,
+      "title_length": 31,
+      "meta_description_length": 11
+    },
+    {
+      "url": "https://solcreatix.com/products/knox-powerwall-6-0/",
+      "status": 200,
+      "title_length": 31,
+      "meta_description_length": 11
+    }
+  ]
+}

@@ -1,0 +1,395 @@
+{
+  "title": "Home - Solcreatix",
+  "meta_description": "Power your home or business with solar systems designed around the appliances, backup needs, and daily usage that actually matter. From inverters and",
+  "meta_robots": "index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+  "canonical": "https://solcreatix.com/",
+  "h1": [
+    "Power engineered for backup freedom."
+  ],
+  "h2": [
+    "SOLAR INVERTERS",
+    "SOLAR BATTERIES",
+    "FEATURED EQUIPMENT",
+    "VISIT OUR OFFICE"
+  ],
+  "h3": [
+    "KNOX Krypton 9000",
+    "Pylon Tech Fidus Battery Plus",
+    "Knox Powerwall 3.0"
+  ],
+  "images": [
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2025/10/Solcreatix-logo-300x150.png",
+      "alt": "Solcreatix pvt. ltd. Main Brand Logo",
+      "width": "300",
+      "height": "150",
+      "loading": null
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/07/workers-installing-solar-panel-on-metal-roof-2026-03-09-02-58-10-utc-scaled.webp",
+      "alt": "",
+      "width": null,
+      "height": null,
+      "loading": null
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/07/colorful-detailed-map-close-up-of-pakistan-2026-03-26-11-36-08-utc-scaled.webp",
+      "alt": "",
+      "width": null,
+      "height": null,
+      "loading": null
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/knox.webp",
+      "alt": "",
+      "width": "512",
+      "height": "512",
+      "loading": null
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/tesla.webp",
+      "alt": "",
+      "width": "512",
+      "height": "512",
+      "loading": null
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/pylon-tech.webp",
+      "alt": "",
+      "width": "512",
+      "height": "512",
+      "loading": "lazy"
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/kafi-power.webp",
+      "alt": "",
+      "width": "512",
+      "height": "512",
+      "loading": "lazy"
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/go-green.webp",
+      "alt": "",
+      "width": "512",
+      "height": "512",
+      "loading": "lazy"
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/knox-krypton-9000.webp",
+      "alt": "",
+      "width": "500",
+      "height": "500",
+      "loading": "lazy"
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/pylontech-fidus-battery-plus.webp",
+      "alt": "",
+      "width": "500",
+      "height": "500",
+      "loading": "lazy"
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/knox-powerwall-6.0.webp",
+      "alt": "",
+      "width": "500",
+      "height": "500",
+      "loading": "lazy"
+    },
+    {
+      "src": "https://solcreatix.com/wp-content/uploads/2026/06/Solcreatix-footer-300x75.png",
+      "alt": "Solcreatix Logo for black background",
+      "width": "300",
+      "height": "75",
+      "loading": null
+    }
+  ],
+  "links": {
+    "internal": [
+      {
+        "href": "https://solcreatix.com",
+        "text": "",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/",
+        "text": "Home",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/products/",
+        "text": "Product",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/about-us/",
+        "text": "About",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/contact/",
+        "text": "Contact Us",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/",
+        "text": "Home",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/products/",
+        "text": "Product",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/about-us/",
+        "text": "About",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/contact/",
+        "text": "Contact Us",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/request-quote/",
+        "text": "Get Quote",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/contact/#technical-consultation",
+        "text": "Start Your Quote",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/products/",
+        "text": "View Product Range",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/products/",
+        "text": "Explore Range \u2192",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/products/",
+        "text": "Explore Range \u2192",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/request-quote/",
+        "text": "REQUEST A QUOTE",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/request-quote/",
+        "text": "REQUEST A QUOTE",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/request-quote/",
+        "text": "REQUEST A QUOTE",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/contact/#technical-consultation",
+        "text": "Request Technical Consultation",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/",
+        "text": "Home",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/products/",
+        "text": "Products",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/about-us/",
+        "text": "About",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/contact/",
+        "text": "Contact",
+        "rel": []
+      },
+      {
+        "href": "https://solcreatix.com/contact/",
+        "text": "Contact Us Page",
+        "rel": [
+          "noopener"
+        ]
+      },
+      {
+        "href": "https://solcreatix.com/solar-energy-load-estimator/",
+        "text": "Energy Load Calculator",
+        "rel": [
+          "noopener"
+        ]
+      },
+      {
+        "href": "https://solcreatix.com/privacy-policy/",
+        "text": "Privacy Policy",
+        "rel": []
+      }
+    ],
+    "external": [
+      {
+        "href": "tel:+923377612211",
+        "text": "+92 337 7612211",
+        "rel": []
+      },
+      {
+        "href": "tel:+923377612211",
+        "text": "+92 337 7612211",
+        "rel": []
+      },
+      {
+        "href": "mailto:info@solcreatix.com",
+        "text": "info@solcreatix.com",
+        "rel": []
+      }
+    ]
+  },
+  "schema": [
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": [
+            "LocalBusiness",
+            "Organization"
+          ],
+          "@id": "https://solcreatix.com/#organization",
+          "name": "Solcreatix Pvt Ltd",
+          "url": "https://solcreatix.com",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "https://solcreatix.com/#logo",
+            "url": "https://solcreatix.com/wp-content/uploads/2025/10/Solcreatix-logo-scaled.png",
+            "contentUrl": "https://solcreatix.com/wp-content/uploads/2025/10/Solcreatix-logo-scaled.png",
+            "caption": "Solcreatix Pvt Ltd",
+            "inLanguage": "en-US",
+            "width": "2560",
+            "height": "1280"
+          },
+          "openingHours": [
+            "Mo,Tu,We,Th,Fr,Sa,Su 09:00-17:00"
+          ],
+          "image": {
+            "@id": "https://solcreatix.com/#logo"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://solcreatix.com/#website",
+          "url": "https://solcreatix.com",
+          "name": "Solcreatix Pvt Ltd",
+          "alternateName": "Solcreatix",
+          "publisher": {
+            "@id": "https://solcreatix.com/#organization"
+          },
+          "inLanguage": "en-US",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://solcreatix.com/?s={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "ImageObject",
+          "@id": "https://solcreatix.com/wp-content/uploads/2026/07/workers-installing-solar-panel-on-metal-roof-2026-03-09-02-58-10-utc-scaled.webp",
+          "url": "https://solcreatix.com/wp-content/uploads/2026/07/workers-installing-solar-panel-on-metal-roof-2026-03-09-02-58-10-utc-scaled.webp",
+          "width": "200",
+          "height": "200",
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://solcreatix.com/#webpage",
+          "url": "https://solcreatix.com/",
+          "name": "Home - Solcreatix",
+          "datePublished": "2026-06-08T09:59:16+00:00",
+          "dateModified": "2026-07-23T12:14:42+00:00",
+          "about": {
+            "@id": "https://solcreatix.com/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://solcreatix.com/#website"
+          },
+          "primaryImageOfPage": {
+            "@id": "https://solcreatix.com/wp-content/uploads/2026/07/workers-installing-solar-panel-on-metal-roof-2026-03-09-02-58-10-utc-scaled.webp"
+          },
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "Person",
+          "@id": "https://solcreatix.com/author/uzair/",
+          "name": "Uzair",
+          "url": "https://solcreatix.com/author/uzair/",
+          "image": {
+            "@type": "ImageObject",
+            "@id": "https://secure.gravatar.com/avatar/3d3e7df63506283952f310c1f54d3c949627224c45ccf7b680646ccae7b775ca?s=96&amp;d=mm&amp;r=g",
+            "url": "https://secure.gravatar.com/avatar/3d3e7df63506283952f310c1f54d3c949627224c45ccf7b680646ccae7b775ca?s=96&amp;d=mm&amp;r=g",
+            "caption": "Uzair",
+            "inLanguage": "en-US"
+          },
+          "sameAs": [
+            "https://solcreatix.com"
+          ],
+          "worksFor": {
+            "@id": "https://solcreatix.com/#organization"
+          }
+        },
+        {
+          "@type": "Article",
+          "headline": "Home - Solcreatix",
+          "datePublished": "2026-06-08T09:59:16+00:00",
+          "dateModified": "2026-07-23T12:14:42+00:00",
+          "author": {
+            "@id": "https://solcreatix.com/author/uzair/",
+            "name": "Uzair"
+          },
+          "publisher": {
+            "@id": "https://solcreatix.com/#organization"
+          },
+          "description": "Power your home or business with solar systems designed around the appliances, backup needs, and daily usage that actually matter. From inverters and",
+          "name": "Home - Solcreatix",
+          "@id": "https://solcreatix.com/#richSnippet",
+          "isPartOf": {
+            "@id": "https://solcreatix.com/#webpage"
+          },
+          "image": {
+            "@id": "https://solcreatix.com/wp-content/uploads/2026/07/workers-installing-solar-panel-on-metal-roof-2026-03-09-02-58-10-utc-scaled.webp"
+          },
+          "inLanguage": "en-US",
+          "mainEntityOfPage": {
+            "@id": "https://solcreatix.com/#webpage"
+          }
+        }
+      ]
+    }
+  ],
+  "open_graph": {
+    "og:locale": "en_US",
+    "og:type": "website",
+    "og:title": "Home - Solcreatix",
+    "og:description": "Power your home or business with solar systems designed around the appliances, backup needs, and daily usage that actually matter. From inverters and",
+    "og:url": "https://solcreatix.com/",
+    "og:site_name": "Solcreatix Pvt Ltd",
+    "og:updated_time": "2026-07-23T12:14:42+00:00"
+  },
+  "twitter_card": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Home - Solcreatix",
+    "twitter:description": "Power your home or business with solar systems designed around the appliances, backup needs, and daily usage that actually matter. From inverters and",
+    "twitter:label1": "Written by",
+    "twitter:data1": "Uzair",
+    "twitter:label2": "Time to read",
+    "twitter:data2": "1 minute"
+  },
+  "word_count": 280,
+  "hreflang": []
+}

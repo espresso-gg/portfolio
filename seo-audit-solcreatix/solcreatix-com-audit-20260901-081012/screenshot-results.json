@@ -1,0 +1,32 @@
+{
+  "screenshots": [
+    {
+      "url": "https://solcreatix.com/",
+      "output": "C:\\Users\\uzair\\OneDrive\\Documents\\Portfolio\\seo-audit-solcreatix\\solcreatix-com-audit-20260901-081012\\screenshots\\solcreatix-com-desktop.png",
+      "viewport": "desktop",
+      "success": true,
+      "error": null
+    },
+    {
+      "url": "https://solcreatix.com/",
+      "output": "C:\\Users\\uzair\\OneDrive\\Documents\\Portfolio\\seo-audit-solcreatix\\solcreatix-com-audit-20260901-081012\\screenshots\\solcreatix-com-laptop.png",
+      "viewport": "laptop",
+      "success": true,
+      "error": null
+    },
+    {
+      "url": "https://solcreatix.com/",
+      "output": "C:\\Users\\uzair\\OneDrive\\Documents\\Portfolio\\seo-audit-solcreatix\\solcreatix-com-audit-20260901-081012\\screenshots\\solcreatix-com-tablet.png",
+      "viewport": "tablet",
+      "success": true,
+      "error": null
+    },
+    {
+      "url": "https://solcreatix.com/",
+      "output": "C:\\Users\\uzair\\OneDrive\\Documents\\Portfolio\\seo-audit-solcreatix\\solcreatix-com-audit-20260901-081012\\screenshots\\solcreatix-com-mobile.png",
+      "viewport": "mobile",
+      "success": true,
+      "error": null
+    }
+  ]
+}
